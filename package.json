@@ -23,9 +23,6 @@
 		"@safe-global/safe-ethers-lib": "^1.9.2",
 		"@safe-global/safe-react-components": "^2.0.1",
 		"@safe-global/safe-service-client": "^2.0.0",
-		"@safient/core": "file:../core-js",
-		"@safient/metasafe-adapter": "file:../snap/packages/adapter",
-		"@safient/metasafe-types": "file:../snap/packages/types",
 		"@tabler/icons": "^1.79.0",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.3.0",
@@ -80,16 +77,18 @@
 	},
 	"browserslist": {
 		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
+		  "chrome >= 67",
+		  "edge >= 79",
+		  "firefox >= 68",
+		  "opera >= 54",
+		  "safari >= 14"
 		],
 		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
+		  "last 1 chrome version",
+		  "last 1 firefox version",
+		  "last 1 safari version"
 		]
-	},
+	  },
 	"devDependencies": {
 		"@types/i18n-js": "^3.8.2",
 		"@types/lodash": "^4.14.182",
