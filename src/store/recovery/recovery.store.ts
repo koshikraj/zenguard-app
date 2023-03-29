@@ -4,11 +4,20 @@ const useRecoveryStore = create((set) => ({
   createStep: 1,
   fetching: false,
   roleName: "",
+  accountDetails: {},
+  safeId: '',
 
   setRoleName: (name: string) => {
     set((state: any) => ({
       ...state,
       roleName: name,
+    }));
+  },
+
+  setSafeId: (id: string) => {
+    set((state: any) => ({
+      ...state,
+      safeId: id,
     }));
   },
 
@@ -28,7 +37,7 @@ const useRecoveryStore = create((set) => ({
       formData: data,
     })),
 
-  accountDetails: {},
+  
 
   setAccountDetails: (data: object) =>
     set((state: any) => ({
@@ -42,10 +51,6 @@ const useRecoveryStore = create((set) => ({
       recoveryDetails: data,
     })),
 
-  sharableDigest: "",
-  setSharableDigest: (digest: any) =>
-    set((state: any) => ({
-      sharableDigest: digest,
-    })),
+
 }));
 export default useRecoveryStore;

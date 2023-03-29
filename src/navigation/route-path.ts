@@ -15,4 +15,5 @@ export enum RoutePath {
   callback = "/callback",
   notifications = "/notifications",
   walletSettings = "/wallet-settings",
+  wallet = "/wallet",
 }

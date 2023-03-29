@@ -18,15 +18,17 @@ export const VouchersScreen = () => {
   const navigate = useNavigate();
   let { code } = useParams();
   const wallet = new Wallet();
-  const { setFetching, setFormData, setRecoveryDetails } = useRecoveryStore(
+  const { setFetching, setSafeId, accountDetails } = useRecoveryStore(
     (state: any) => state
   );
 
   const [modalActive, setModalActive] = useState(code ? true : false);
 
-  const voucherCardHandler = async (safeId: any) => {
+  const safeCardHandler = async (safeId: any) => {
     setFetching(true);
-    // todo- add a check for creator and ben
+    setSafeId(safeId);
+    navigate(RoutePath.wallet);
+    
   };
 
   return (
@@ -54,11 +56,11 @@ export const VouchersScreen = () => {
 
         <div className={classes.vouchersContainer}>
 
-          {[].map((v) => (
+          {accountDetails.authResponse?.safes?.map((v: any) => (
             <div key={v}>
               <VoucherCard
-                title={v}
-                onClick={() => voucherCardHandler(v)}
+                address={v}
+                onClick={() => safeCardHandler(v)}
               />
             </div>
           ))}

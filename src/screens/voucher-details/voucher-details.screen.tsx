@@ -17,38 +17,50 @@ import {
 import { IconCopy, IconBell, IconSettings } from "@tabler/icons";
 import { useStyles } from "./voucher-details.screen.styles";
 import useRecoveryStore from "store/recovery/recovery.store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VoucherDetailsShimmer } from "./voucher-details.shimmer";
 import { Actions } from "./components/actions.component";
 import { useNavigate } from "react-router-dom";
 import { RoutePath } from "navigation";
 import { LockedWallet } from "./components/locked-wallet.component";
 import { Activity } from "./components/activitity.component";
+import { ethers } from "ethers";
 
 export const VoucherDetailsScreen = () => {
   const { classes } = useStyles();
 
   const navigate = useNavigate();
-  const { recoveryDetails, fetching } = useRecoveryStore((state: any) => state);
+  const { accountDetails, fetching, setFetching, safeId } = useRecoveryStore((state: any) => state);
+  const [ balance, setBalance ] = useState('0');
 
-  const formatExpiration = () => {
-    const presentTime = Date.now() / 1000;
+  // const formatExpiration = () => {
+  //   const presentTime = Date.now() / 1000;
 
-    const expiresOn = ` ${new Date(
-      recoveryDetails.timeStamp + recoveryDetails.expirationTime * 1000
-    ).toLocaleString()} ( ${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
-    const expirationTime =
-      recoveryDetails.timeStamp / 1000 +
-      recoveryDetails.expirationTime -
-      presentTime;
+  //   const expiresOn = ` ${new Date(
+  //     recoveryDetails.timeStamp + recoveryDetails.expirationTime * 1000
+  //   ).toLocaleString()} ( ${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
+  //   const expirationTime =
+  //     recoveryDetails.timeStamp / 1000 +
+  //     recoveryDetails.expirationTime -
+  //     presentTime;
 
-    return {
-      days: Math.floor(expirationTime / 86400),
-      hours: Math.ceil((expirationTime % 86400) / 3600),
-      expired: expirationTime <= 0,
-      expiresOn: expiresOn,
-    };
-  };
+  //   return {
+  //     days: Math.floor(expirationTime / 86400),
+  //     hours: Math.ceil((expirationTime % 86400) / 3600),
+  //     expired: expirationTime <= 0,
+  //     expiresOn: expiresOn,
+  //   };
+  // };
+
+  useEffect(() => {
+    ;(async () => {
+      
+      setFetching(false);
+      const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider)
+      setBalance(ethers.utils.formatEther(await safeOwner.getBalance(safeId)));   
+
+    })()
+  }, [])
 
   return (
     <>
@@ -81,7 +93,7 @@ export const VoucherDetailsScreen = () => {
                       borderRadius: "4px",
                     }}
                   >
-                    <Text color={"green"}>Network name</Text>
+                    <Text color={"green"}>Base Goerli Testnet</Text>
                   </Box>
                   <Group>
                     <IconBell
@@ -107,7 +119,7 @@ export const VoucherDetailsScreen = () => {
                         }
                       }
                     >
-                      0x9...........dc3B
+                      { safeId }
                     </Text>
                     <IconCopy />
                   </Group>
@@ -121,13 +133,13 @@ export const VoucherDetailsScreen = () => {
                       justifyContent: "center",
                       gap: "10px",
                       // eslint-disable-next-line no-restricted-globals
-                      filter: "blur(8px)", //conditional render
+                      // filter: "blur(8px)", //conditional render
                     }}
                   >
-                    <Text weight={600} sx={{ fontSize: "40px" }}>
-                      20
+                    <Text weight={600} sx={{ fontSize: "30px" }}>
+                    { balance }
                     </Text>
-                    <Text size="sm">Eth</Text>
+                    <Text size="sm">ETH</Text>
                   </Box>
                 </Center>
 

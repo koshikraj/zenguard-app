@@ -23,22 +23,24 @@ import { useStyles } from "./create-recovery.component.styles";
 import { DatePicker } from "@mantine/dates";
 import { useServices } from "services";
 import { BackButton, ProgressStatus, Title, Image } from "../../../components";
+import recoveryModule from "../../../artifacts/SocialRecoveryModule.json";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import {  } from "services";
 
-
 //@ts-ignore
 import Flask from "../../../assets/icons/flask.svg";
 //@ts-ignore
-import Safe from "../../../assets/icons/safe.svg";
+import Safe from "../../../assets/icons/safe.png";
 import { ethers } from "ethers";
 import EthersAdapter from "@safe-global/safe-ethers-lib";
 import { SafeAccountConfig, SafeFactory } from "@safe-global/safe-core-sdk";
 import SafeServiceClient from "@safe-global/safe-service-client";
+import { Contract } from "ethers";
+import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 
 
-const progressMessage = [{text: "Confirm the recovery on MetaMask Snap", image: Flask}, {text: "Creating recovery for wallet", image: Safe}]
+const progressMessage = [{text: "Creating a wallet using Safe", image: Safe}, {text: "Creating a wallet using Safe", image: Safe}]
 
 export const CreateRecoveryForm = () => {
   const { classes } = useStyles();
@@ -51,12 +53,9 @@ export const CreateRecoveryForm = () => {
   const [progressStage, setProgressStage] = useState(0);
 
 
-  const [signalingPeriod, setSignalingPeriod] = useState(30);
-
   const [isBeneficiary, setIsBeneficiary] = useState(false);
   const [walletBeneficiary, setWalletBeneficiary]: any = useState('');
 
-  const [claimType, setClaimType]: any = useState();
   const [DdayTime, setDdayTime] = useState(0);
 
   const [date, setDate] = useState(null);
@@ -75,10 +74,11 @@ export const CreateRecoveryForm = () => {
     (state: any) => state
   );
 
-  console.log(accountDetails)
 
   const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
+
+  
   
   const createSafe = async () => {
   
@@ -89,6 +89,7 @@ export const CreateRecoveryForm = () => {
       signerOrProvider:safeOwner
     })
 
+    
     const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 
     console.log(await safeService.getSafesByOwner(accountDetails.authResponse.eoa))
@@ -104,13 +105,33 @@ export const CreateRecoveryForm = () => {
     }
 
     const safeSdk = await safeFactory.deploySafe({ safeAccountConfig })
-
-    // // safeSdk.createRemoveOwnerTx
     
+
+    let trans = await safeSdk.createEnableModuleTx("0x9E7796874DD7BEd85B25D9589006a2942718a378");
+    let txResponse = await safeSdk.executeTransaction(trans)
+    await txResponse.transactionResponse?.wait()
+    console.log(await safeSdk.getModules())
+
+    const recoveryModuleInstance = new Contract("0x9E7796874DD7BEd85B25D9589006a2942718a378", recoveryModule.abi, safeOwner)
+
+    console.log(recoveryModuleInstance)
+
+    let addGuardian = await recoveryModuleInstance.interface.encodeFunctionData('addGuardianWithThreshold', [safeSdk.getAddress(), '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA', 1])
+    
+    const safeTransactionData: SafeTransactionDataPartial = {
+      to: '0x9E7796874DD7BEd85B25D9589006a2942718a378',
+      value: "0",
+      data: addGuardian 
+    }
+
+    const transaction = await safeSdk.createTransaction({safeTransactionData})
+    console.log(await safeSdk.executeTransaction(transaction))
+
     console.log(safeSdk.getAddress())
+    console.log(await recoveryModuleInstance.getGuardians(safeSdk.getAddress()))
 
     setCreating(false);
-
+  
 
   }
 
@@ -171,13 +192,13 @@ export const CreateRecoveryForm = () => {
       <Paper className={classes.formContainer} withBorder>
         <BackButton label="Back to Previous" onClick={backButtonHandler} />
         <Group mb={30}>
-          <Title>Create a Safe</Title>
+          <Title>Create a Wallet</Title>
         </Group>
         <Stack justify="flex-start">
           <TextInput
             type="text"
-            placeholder="Enter Wallet Recovery Name"
-            label="Wallet Recovery Name"
+            placeholder="Enter Wallet Name"
+            label="Wallet Name (Optional)"
             rightSectionWidth={92}
             onChange={(event) => {
               setWalletName(event.target.value);
@@ -185,8 +206,8 @@ export const CreateRecoveryForm = () => {
           />
 
           <Textarea
-            placeholder="Wallet Recovery Description"
-            label="Wallet Recovery Description (Optional)"
+            placeholder="Wallet Description"
+            label="Wallet Description (Optional)"
             rightSectionWidth={92}
             onChange={(event) => {
               setWalletDescription(event.target.value);
@@ -195,7 +216,7 @@ export const CreateRecoveryForm = () => {
 
           <Group sx={{ justifyContent: "space-between" }}>
             <Text size="md" weight={600}>
-              Add a beneficiary
+              Advanced options
             </Text>{" "}
             <Switch
               checked={isBeneficiary}
@@ -215,7 +236,7 @@ export const CreateRecoveryForm = () => {
 
           {/* advanced */}
 
-          <Group sx={{ justifyContent: "space-between" }}>
+          {/* <Group sx={{ justifyContent: "space-between" }}>
             <Text size="md" weight={600}>
               Add a recovery method
             </Text>{" "}
@@ -223,9 +244,9 @@ export const CreateRecoveryForm = () => {
               checked={advancedOptions}
               onChange={() => setAdvancedOptions(!advancedOptions)}
             />
-          </Group>
+          </Group> */}
 
-          {advancedOptions && (
+          {/* {advancedOptions && (
             <>
               <Select
                 label="Select Claim Type"
@@ -248,12 +269,6 @@ export const CreateRecoveryForm = () => {
                 ]}
                 onChange={(value) => setClaimType(parseInt(value!))}
               />
-              {/* render feilds based on selected values */}
-              {/* <DatePicker
-                placeholder="Select DDAY date"
-                label="Select DDay Date 
-"
-              /> */}
 
           <TextInput
             type="text"
@@ -270,7 +285,7 @@ export const CreateRecoveryForm = () => {
             signaling period. Click on "Add a Claim Type" to update
           </Alert>
             </>
-          )}
+          )} */}
 
 
          
@@ -281,6 +296,10 @@ export const CreateRecoveryForm = () => {
             onClick={() => {
               createSafe();
             }}
+            style={{
+              background:
+                "linear-gradient(132.56deg, #61FF47 -20.89%, #89B8FF 99.53%, #FF70F1 123.47%)",
+            }}
           >
             Create
           </Button>
@@ -290,9 +309,9 @@ export const CreateRecoveryForm = () => {
       <Container className={classes.progressbox}>
         <ProgressStatus
           title="Creating a wallet via Safe"
-          description="Provide the basic details for wallet recovery. You can select a wallet recovery method and also add a beneficiary ✍️."
+          description="Provide the basic details for the wallet. You can even create a multisig wallet with multiple signer ✍️."
           // update the status according to the progress
-          status={creating ? 80 : 60}
+          status={creating ? 100 : 50}
         />
       </Container>
     </Container>

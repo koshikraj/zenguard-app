@@ -38,6 +38,7 @@
 		"eslint-config-airbnb-typescript": "^17.0.0",
 		"ethereumjs-wallet": "^1.0.2",
 		"ethers": "^5.5.4",
+		"hardhat": "^2.13.0",
 		"i18n-js": "^3.8.0",
 		"lodash": "^4.17.21",
 		"magic-sdk": "^4.0.2",
@@ -77,18 +78,18 @@
 	},
 	"browserslist": {
 		"production": [
-		  "chrome >= 67",
-		  "edge >= 79",
-		  "firefox >= 68",
-		  "opera >= 54",
-		  "safari >= 14"
+			"chrome >= 67",
+			"edge >= 79",
+			"firefox >= 68",
+			"opera >= 54",
+			"safari >= 14"
 		],
 		"development": [
-		  "last 1 chrome version",
-		  "last 1 firefox version",
-		  "last 1 safari version"
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
 		]
-	  },
+	},
 	"devDependencies": {
 		"@types/i18n-js": "^3.8.2",
 		"@types/lodash": "^4.14.182",

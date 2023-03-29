@@ -1,7 +1,6 @@
 export interface VoucherCardComponentProps {
+  address?: string,
   title?: string;
   description?: string;
-  redeemed?: boolean;
-  source?: string;
   onClick?: (id: any) => any;
 }
