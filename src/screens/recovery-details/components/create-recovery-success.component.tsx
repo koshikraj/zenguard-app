@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { IconShieldCheck, IconCheck, IconCopy } from "@tabler/icons";
 //@ts-ignore
-import MetaSafe from "../../../assets/images/meta-safe.svg";
+import MetaSafe from "../../../assets/images/zen-safe.svg";
 import { BackButton, Image, ProgressStatus, Title } from "../../../components";
 import { useStyles } from "./create-recovery.component.styles";
 //@ts-ignore

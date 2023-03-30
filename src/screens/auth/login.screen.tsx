@@ -89,7 +89,6 @@ export function LoginScreen(props: any) {
 
     const response = await safeAuth.signIn()
     console.log('SIGN IN RESPONSE: ', response)
-    // console.log(await safeService.getSafesByOwner('0xd5B5Ff46dEB4baA8a096DD0267C3b81Bda65e943'))
 
     console.log(response)
     setSafeAuthSignInResponse(response)
@@ -172,7 +171,7 @@ export function LoginScreen(props: any) {
 
               <Box mt="md">
               <Text size="sm" >
-            Get started just with your social accounts, email or event your existing wallets. It's that simple!
+            Get started just with your social accounts, email or even your existing wallets. It's that simple!
             .
           </Text>
             </Box>

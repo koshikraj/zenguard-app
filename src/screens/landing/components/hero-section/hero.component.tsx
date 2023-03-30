@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { HeroSectionContainer, useStyles } from "./hero.component.styles";
-import HeroImage from "../../assets/images/metasafe.svg";
+import HeroImage from "../../assets/images/zen-safe.svg";
 import { StyledSpan } from "../common/span/span.component";
 import { Button } from "../common/button/button.component";
 import { WaitListForm } from "./mailchimp";

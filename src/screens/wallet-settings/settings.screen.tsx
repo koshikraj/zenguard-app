@@ -1,5 +1,6 @@
 import {
   Accordion,
+  Alert,
   Box,
   Button,
   Center,
@@ -24,16 +25,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import useRecoveryStore from "store/recovery/recovery.store";
-import sha256 from 'crypto';
+import crypto from 'crypto';
 
 
 import recoveryModule from "../../artifacts/SocialRecoveryModule.json";
 //@ts-ignore
 import ZenGuard from "../../assets/icons/zenguard.svg";
+import { IconCheck } from "@tabler/icons";
 
 
 const oauthGuardian = '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA';
-const recoveryAPI = 'http://localhost:8080';
+const recoveryAPI = 'https://api.zenguard.xyz';
 
 const useStyles = createStyles((theme) => ({
   settingsContainer: {
@@ -67,18 +69,15 @@ export const WalletSettings = () => {
   const [walletBeneficiary, setWalletBeneficiary]: any = useState('');
   const [claimType, setClaimType]: any = useState();
   const [creating, setCreating] = useState(false);
+  const [executedHash, setExecutedHash] = useState("");
   
 
   const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
-  console.log(accountDetails)
-
-
-  
   
   const createRecovery = async () => {
 
-    const recoveryEmailHash = sha256.createHash('sha256').update(walletBeneficiary).digest('hex');
+    const recoveryEmailHash = crypto.createHash('sha256').update(walletBeneficiary).digest('hex');
 
     console.log(recoveryEmailHash)
 
@@ -108,9 +107,9 @@ export const WalletSettings = () => {
     const safeSdk: Safe = await Safe.create({ ethAdapter, safeAddress: safeId })
     console.log(await safeSdk.getOwners())
 
-    // let enableModuleTrans = await safeSdk.createEnableModuleTx(recModule);
-    // let txResponse = await safeSdk.executeTransaction(enableModuleTrans)
-    // await txResponse.transactionResponse?.wait()
+    let enableModuleTrans = await safeSdk.createEnableModuleTx(recModule);
+    let txResponse = await safeSdk.executeTransaction(enableModuleTrans)
+    await txResponse.transactionResponse?.wait()
     console.log(await safeSdk.getModules())
 
     console.log(recModule)
@@ -127,10 +126,13 @@ export const WalletSettings = () => {
       data: addGuardian 
     }
 
-    // const transaction = await safeSdk.createTransaction({safeTransactionData})
-    // console.log(await safeSdk.executeTransaction(transaction))
+    const transaction = await safeSdk.createTransaction({safeTransactionData})
+    const execResponse = await safeSdk.executeTransaction(transaction)
+    
+    if(execResponse.hash) {
+      setExecutedHash(execResponse.hash);
+    }
 
-    console.log(safeSdk.getAddress())
     console.log(await recoveryModuleInstance.getGuardians(safeSdk.getAddress()))
 
     setCreating(false);
@@ -270,6 +272,11 @@ export const WalletSettings = () => {
           >
             Confirm
           </Button>
+
+          { executedHash && <Alert icon={<IconCheck size={32} />} title="Recovery created!" color="green" radius="lg">
+            Recovery successfully created for the wallet. Verify <a href={`https://goerli.basescan.org/tx/${executedHash}`} target="_blank">here</a>
+          </Alert> 
+          }
 
         </Stack>
       </Container>

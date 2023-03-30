@@ -48,7 +48,9 @@ export const VouchersScreen = () => {
           <GenericCard
             title="Recover"
             name="redeem"
-            onClick={() => window.location.href = "https://wallet.safient.io"}
+            onClick={() => {
+              navigate(RoutePath.walletRecovery);
+            }}
           />
         </div>
 

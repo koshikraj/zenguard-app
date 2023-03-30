@@ -45,7 +45,7 @@ export function FooterSection() {
       <div className="footer-copy">
         <Paragraph centered>
           {" "}
-          &copy; {new Date().getFullYear()} - Built using Safient Protocol.{" "}
+          &copy; {new Date().getFullYear()} - Crafted with ❤️ by ZenGuard.{" "}
         </Paragraph>
       </div>
     </FooterSectionContainer>

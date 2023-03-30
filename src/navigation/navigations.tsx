@@ -11,7 +11,8 @@ import {
   TeamsScreen,
   WalletSettings,
   WalletNotification,
-  VoucherDetailsScreen
+  VoucherDetailsScreen,
+  WalletRecoveryScreen
 } from "../screens";
 import { GlobalStyle } from "../utils";
 import { RoutePath } from "./route-path";
@@ -22,6 +23,7 @@ export const Navigation = () => {
       <Route path={RoutePath.login} element={<LoginScreen />} />
       <Route path={RoutePath.recovery} element={<VouchersScreen />} />
       <Route path={RoutePath.wallet} element={<VoucherDetailsScreen />} />
+      <Route path={RoutePath.walletRecovery} element={<WalletRecoveryScreen />} />
 
 
       <Route path={RoutePath.notFound} element={<NotFound />} />

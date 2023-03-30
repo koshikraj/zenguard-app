@@ -17,7 +17,7 @@ import {
   Loader,
   Center,
 } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons";
+import { IconAlertCircle, IconMoneybag } from "@tabler/icons";
 import useRecoveryStore from "store/recovery/recovery.store";
 import { useStyles } from "./create-recovery.component.styles";
 import { DatePicker } from "@mantine/dates";
@@ -116,18 +116,6 @@ export const CreateRecoveryForm = () => {
   }
 
 
-
-
-
-  const createRecovery = async () => {
-    setCreating(true);
-
-    setFormData({
-      title: walletName,
-      description: walletDescription
-    });
-
-}
 
   const backButtonHandler = () => {
     setCreateStep(1);
@@ -267,7 +255,9 @@ export const CreateRecoveryForm = () => {
             </>
           )} */}
 
-
+      <Alert icon={<IconMoneybag size={32} />} title="Topup small amount!" color="grape" radius="lg">
+           Make sure to deposit some ETH on Base Goerli chain for safe creation: {accountDetails.authResponse.eoa}
+        </Alert>  
          
 
           <Button

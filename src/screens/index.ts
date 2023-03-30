@@ -11,3 +11,5 @@ export * from "./create-recovery/create-recovery.screen";
 
 export * from "./wallet-settings/settings.screen";
 export * from "./wallet-notification/wallet-notification.screen";
+
+export * from "./wallet-recovery/wallet-recovery.screen";

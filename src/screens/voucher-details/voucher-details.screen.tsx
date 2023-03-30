@@ -33,24 +33,6 @@ export const VoucherDetailsScreen = () => {
   const { accountDetails, fetching, setFetching, safeId } = useRecoveryStore((state: any) => state);
   const [ balance, setBalance ] = useState('0');
 
-  // const formatExpiration = () => {
-  //   const presentTime = Date.now() / 1000;
-
-  //   const expiresOn = ` ${new Date(
-  //     recoveryDetails.timeStamp + recoveryDetails.expirationTime * 1000
-  //   ).toLocaleString()} ( ${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
-  //   const expirationTime =
-  //     recoveryDetails.timeStamp / 1000 +
-  //     recoveryDetails.expirationTime -
-  //     presentTime;
-
-  //   return {
-  //     days: Math.floor(expirationTime / 86400),
-  //     hours: Math.ceil((expirationTime % 86400) / 3600),
-  //     expired: expirationTime <= 0,
-  //     expiresOn: expiresOn,
-  //   };
-  // };
 
   useEffect(() => {
     ;(async () => {
@@ -88,12 +70,12 @@ export const VoucherDetailsScreen = () => {
                   <Title text="Wallet Name" />
                   <Box
                     sx={{
-                      backgroundColor: "#EDF7F5",
+                      backgroundColor: "rgba(73, 179, 147, 0.1);",
                       padding: "4px 16px",
                       borderRadius: "4px",
                     }}
                   >
-                    <Text color={"green"}>Base Goerli Testnet</Text>
+                    <Text color={"green"}> Base Goerli Testnet</Text>
                   </Box>
                   <Group>
                     <IconBell
@@ -118,6 +100,10 @@ export const VoucherDetailsScreen = () => {
                           // filter: "blur(8px)"
                         }
                       }
+                      onClick={()=> window.open(
+                        `https://goerli.basescan.org/address/${safeId}`,
+                        "_blank"
+                      )}
                     >
                       { safeId }
                     </Text>
