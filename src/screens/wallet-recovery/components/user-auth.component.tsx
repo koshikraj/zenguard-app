@@ -213,24 +213,6 @@ export const UserAuth = () => {
 
         { authenticated && <Alert icon={<IconCheck size={32} />} title="Email verified!" color="green" radius="lg">
             Your email is successfully verified proceed to recover the wallet.
-            {/* <TextInput
-          label="Connected"
-          width={"100%"}
-          value={address}
-          placeholder={address}
-          mt={40}
-          mb={20}
-          rightSection={
-            <IconCopy
-              size={18}
-              cursor="pointer"
-              style={{ stroke: "#495057" }}
-              // color={clipboard.copied ? "teal" : "#eee"}
-              onClick={() => {
-              }}
-            />
-          }
-        /> */}
           </Alert> 
           }
          

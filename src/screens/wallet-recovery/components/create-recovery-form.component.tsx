@@ -25,8 +25,7 @@ import { useServices } from "services";
 import { BackButton, ProgressStatus, Title, Image } from "../../../components";
 import recoveryModule from "../../../artifacts/SocialRecoveryModule.json";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
-import {  } from "services";
+import crypto from "crypto";
 
 //@ts-ignore
 import Flask from "../../../assets/icons/flask.svg";
@@ -121,7 +120,11 @@ export const CreateRecoveryForm = () => {
 
     web3auth.connect()
 
-    console.log(await web3auth.getUserInfo())
+    const walletBeneficiary = await web3auth.getUserInfo()
+
+    const recoveryEmailHash = crypto.createHash('sha256').update(walletBeneficiary.email!).digest('hex');
+
+    console.log(recoveryEmailHash)
     // const response = await safeAuth.signIn()
     // console.log( safeAuth.)
     // console.log('SIGN IN RESPONSE: ', response)
