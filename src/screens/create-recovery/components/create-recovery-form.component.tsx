@@ -38,6 +38,7 @@ import { SafeAccountConfig, SafeFactory } from "@safe-global/safe-core-sdk";
 import SafeServiceClient from "@safe-global/safe-service-client";
 import { Contract } from "ethers";
 import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
+import { RoutePath } from "navigation";
 
 
 const progressMessage = [{text: "Creating a wallet using Safe", image: Safe}, {text: "Creating a wallet using Safe", image: Safe}]
@@ -70,7 +71,7 @@ export const CreateRecoveryForm = () => {
 
   const [advancedOptions, setAdvancedOptions] = useState(false);
 
-  const { setCreateStep, setFormData, accountDetails } = useRecoveryStore(
+  const { setCreateStep, setFormData, accountDetails, setSafeId } = useRecoveryStore(
     (state: any) => state
   );
 
@@ -105,34 +106,13 @@ export const CreateRecoveryForm = () => {
     }
 
     const safeSdk = await safeFactory.deploySafe({ safeAccountConfig })
-    
 
-    let trans = await safeSdk.createEnableModuleTx("0x9E7796874DD7BEd85B25D9589006a2942718a378");
-    let txResponse = await safeSdk.executeTransaction(trans)
-    await txResponse.transactionResponse?.wait()
-    console.log(await safeSdk.getModules())
-
-    const recoveryModuleInstance = new Contract("0x9E7796874DD7BEd85B25D9589006a2942718a378", recoveryModule.abi, safeOwner)
-
-    console.log(recoveryModuleInstance)
-
-    let addGuardian = await recoveryModuleInstance.interface.encodeFunctionData('addGuardianWithThreshold', [safeSdk.getAddress(), '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA', 1])
-    
-    const safeTransactionData: SafeTransactionDataPartial = {
-      to: '0x9E7796874DD7BEd85B25D9589006a2942718a378',
-      value: "0",
-      data: addGuardian 
-    }
-
-    const transaction = await safeSdk.createTransaction({safeTransactionData})
-    console.log(await safeSdk.executeTransaction(transaction))
-
-    console.log(safeSdk.getAddress())
-    console.log(await recoveryModuleInstance.getGuardians(safeSdk.getAddress()))
+    setSafeId(safeSdk.getAddress())
 
     setCreating(false);
-  
 
+    navigate(RoutePath.wallet)
+  
   }
 
 

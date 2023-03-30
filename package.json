@@ -34,6 +34,7 @@
 		"@walletconnect/web3-provider": "^1.8.0",
 		"axios": "^0.27.2",
 		"bip39": "^3.0.4",
+		"crypto-js": "^4.1.1",
 		"dayjs": "^1.11.6",
 		"eslint-config-airbnb-typescript": "^17.0.0",
 		"ethereumjs-wallet": "^1.0.2",

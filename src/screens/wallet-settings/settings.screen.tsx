@@ -22,14 +22,18 @@ import { BackButton, EmptyState, Image } from "components";
 import { Contract, ethers } from "ethers";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import useRecoveryStore from "store/recovery/recovery.store";
+import sha256 from 'crypto';
+
 
 import recoveryModule from "../../artifacts/SocialRecoveryModule.json";
 //@ts-ignore
 import ZenGuard from "../../assets/icons/zenguard.svg";
 
 
-const oauthGuardian = '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA'
+const oauthGuardian = '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA';
+const recoveryAPI = 'http://localhost:8080';
 
 const useStyles = createStyles((theme) => ({
   settingsContainer: {
@@ -74,10 +78,19 @@ export const WalletSettings = () => {
   
   const createRecovery = async () => {
 
+    const recoveryEmailHash = sha256.createHash('sha256').update(walletBeneficiary).digest('hex');
 
-    const recModule = '0x72D2eb8c1A301119f64C94B7a0F1B5676E1cCF92';
-  
+    console.log(recoveryEmailHash)
+
     try {
+    const recoveryResponse = await axios.post(`${recoveryAPI}/recovery`, {
+      recoveryEmailHash: recoveryEmailHash,
+      safeAddress: safeId
+    })
+    
+    const recModule = recoveryResponse.data.data.recoveryModuleAddress;
+  
+    
     setCreating(true);
     const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider).getSigner(0)
     const ethAdapter = new EthersAdapter({
@@ -90,12 +103,17 @@ export const WalletSettings = () => {
 
     console.log(await safeService.getSafesByOwner(accountDetails.authResponse.eoa))
 
+    
+
     const safeSdk: Safe = await Safe.create({ ethAdapter, safeAddress: safeId })
+    console.log(await safeSdk.getOwners())
 
     // let enableModuleTrans = await safeSdk.createEnableModuleTx(recModule);
     // let txResponse = await safeSdk.executeTransaction(enableModuleTrans)
     // await txResponse.transactionResponse?.wait()
     console.log(await safeSdk.getModules())
+
+    console.log(recModule)
 
     const recoveryModuleInstance = new Contract(recModule, recoveryModule.abi, safeOwner)
 
@@ -156,7 +174,7 @@ export const WalletSettings = () => {
               <Loader />
               
               <Text mt={"lg"} align='center'> Adding recovery module to your wallet
-              <Box sx={{ paddingTop: "20px" }}><Center><Image src={ZenGuard} width={30}/></Center> </Box>
+              <Box sx={{ paddingTop: "20px" }}><Center><Image src={ZenGuard} width={50}/></Center> </Box>
               </Text>
               
             </Container>
