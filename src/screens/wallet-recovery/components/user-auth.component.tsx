@@ -20,8 +20,6 @@ import {
 import { IconAlertCircle, IconCheck, IconCopy, IconPlugConnected } from "@tabler/icons";
 import useRecoveryStore from "store/recovery/recovery.store";
 import { useStyles } from "./create-recovery.component.styles";
-import { DatePicker } from "@mantine/dates";
-import { useServices } from "services";
 import { BackButton, ProgressStatus, Title, Image } from "../../../components";
 import recoveryModule from "../../../artifacts/SocialRecoveryModule.json";
 import { useNavigate } from "react-router-dom";
@@ -79,16 +77,14 @@ export const UserAuth = () => {
 
 
   const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
-  const recoveryAPI = 'https://api.zenguard.xyz';
-
-
+  const recoveryAPI = process.env.REACT_APP_RECOVERY_API;
   
   
   const authenticateUser = async () => {
     
     setCreating(true);
     const web3auth = new Web3Auth({
-      clientId: 'BAcCop_qaWVfw15peOnVq8xd8KefD3UvZ-3bKip0RNy0w1J0Z8ZKNNzWiFW97a66S-UGr-oZpzdk1hE8SwWmy00',
+      clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
       web3AuthNetwork: 'testnet',
       chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
@@ -127,6 +123,7 @@ export const UserAuth = () => {
       const recoveryResponse = await axios.post(`${recoveryAPI}/recover`, {
         recoveryEmailHash: recoveryEmailHash,
         newOwner: newOwner,
+        idToken: idToken,
       })
       console.log(recoveryResponse)
       setSafeId(recoveryResponse.data.data.safeAddress)
@@ -134,27 +131,12 @@ export const UserAuth = () => {
       setCreating(false);
 
     }
-
-
   catch(e) {
     setCreating(false);
     console.log(e);
   }
 }
 
-
-
-
-
-  const createRecovery = async () => {
-    setCreating(true);
-
-    setFormData({
-      title: walletName,
-      description: walletDescription
-    });
-
-}
 
   const backButtonHandler = () => {
     setCreateStep(1);
