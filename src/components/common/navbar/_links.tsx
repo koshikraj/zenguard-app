@@ -53,7 +53,7 @@ const data = [
   { icon: <IconWallet size="2em" />, color: 'blue', label: 'Account', value: RoutePath.account },
   { icon: <IconApps size="2rem" />, color: 'teal', label: 'DApp Transactions', value: RoutePath.account  },
   { icon: <IconShieldCheck size="2rem" />, color: 'violet', label: 'Recovery', value: RoutePath.recovery  },
-  { icon: <Icon2fa size="2rem" />, color: 'grape', label: 'Transaction Guard', value: RoutePath.walletRecovery  },
+  { icon: <Icon2fa size="2rem" />, color: 'grape', label: 'Transaction Guard', value: RoutePath.transactionGuard  },
 ];
 
 export function MainLinks() {

@@ -9,7 +9,8 @@ import {
 import { useStyles } from "./generic-card.component.styles";
 
 import Fingerprint from "../../assets/icons/fingerprint.png";
-import Mail from "../../assets/icons/mail.png";
+import Limit from "../../assets/icons/limit.png";
+import Session from "../../assets/icons/session.png";
 import { Icon123 } from "@tabler/icons";
 
 export interface GenericCardProps {
@@ -23,7 +24,7 @@ export const GenericCard: React.FC<GenericCardProps & ImageComponentProps> = (
 ) => {
   const { width, title, name = "biometric", onClick } = props;
 
-  const src = name === "email" ? Mail : Fingerprint;
+  const src = name === "limit" ? Limit : ( name === "biometric" ? Fingerprint : Session );
 
   const { classes } = useStyles();
   return (

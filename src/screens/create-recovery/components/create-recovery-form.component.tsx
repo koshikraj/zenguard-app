@@ -212,59 +212,6 @@ export const CreateRecoveryForm = () => {
           />
           }
 
-          {/* advanced */}
-
-          {/* <Group sx={{ justifyContent: "space-between" }}>
-            <Text size="md" weight={600}>
-              Add a recovery method
-            </Text>{" "}
-            <Switch
-              checked={advancedOptions}
-              onChange={() => setAdvancedOptions(!advancedOptions)}
-            />
-          </Group> */}
-
-          {/* {advancedOptions && (
-            <>
-              <Select
-                label="Select Claim Type"
-                placeholder="Select Cliam Type"
-                // itemComponent={SelectItem}
-                // value={chain}
-                data={[
-                  {
-                    value: "0",
-                    label: "Signaling (You can send the signal when claimed)",
-                  },
-                  {
-                    value: "1",
-                    label: "Arbitration (Arbitrators decide the claim)",
-                  },
-                  {
-                    value: "2",
-                    label: "DDAY (Claim on exact date)",
-                  },
-                ]}
-                onChange={(value) => setClaimType(parseInt(value!))}
-              />
-
-          <TextInput
-            type="text"
-            placeholder={signalingPeriod.toString()}
-            label="Signaling period (Seconds)"
-            rightSectionWidth={92}
-            onChange={(event) => {
-              setSignalingPeriod(parseInt(event.target.value));
-            }}
-          />
-
-          <Alert>
-            This will create a wallet using signaling method with 300 sec
-            signaling period. Click on "Add a Claim Type" to update
-          </Alert>
-            </>
-          )} */}
-
       <Alert icon={<IconMoneybag size={32} />} title="Topup small amount!" color="grape" radius="lg">
            Make sure to deposit some ETH on Base Goerli chain for safe creation: {accountDetails.authResponse.eoa}
         </Alert>  

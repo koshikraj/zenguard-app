@@ -17,4 +17,5 @@ export enum RoutePath {
   walletSettings = "/wallet-settings",
   wallet = "/wallet",
   walletRecovery = "/wallet-recovery",
+  transactionGuard = "/transaction-guards",
 }

@@ -115,15 +115,7 @@ export const Head = (props) => {
   return (
     <Header  height={{ base: 50, md: 70 }} p="md">
       {/* <div className={classes.wrapper} style={{ display: 'flex', alignItems: 'center', height: '100%' }}> */}
-      <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-              <Burger
-                opened={opened}
-                onClick={() => setOpened((o) => !o)}
-                size="sm"
-                color={theme.colors.gray[6]}
-                mr="xl"
-              />
-            </MediaQuery>
+  
 
       <Box
       sx={(theme) => ({
@@ -135,6 +127,8 @@ export const Head = (props) => {
         }`,
       })}
     >
+       
+         
         <Group position="apart">
           <Image
             onClick={() => {
@@ -147,6 +141,9 @@ export const Head = (props) => {
             alt="Logo"
             width={"180px"}
           />
+
+            
+          
           <Group className={classes.container}>
             <ActionIcon
               className={classes.buttonContainer}
@@ -194,6 +191,15 @@ export const Head = (props) => {
                 )}
               </div>
             </Group>
+            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+              <Burger
+                opened={opened}
+                onClick={() => setOpened((o) => !o)}
+                size="sm"
+                color={theme.colors.gray[6]}
+                mr="xl"
+              />
+            </MediaQuery>
           </Group>
           </Group>
           </Box>

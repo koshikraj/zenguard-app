@@ -14,7 +14,7 @@ import {
   Send,
   Title,
 } from "../../components";
-import { IconCopy, IconBell, IconSettings } from "@tabler/icons";
+import { IconCopy, IconBell, IconSettings, IconPlus } from "@tabler/icons";
 import { useStyles } from "./voucher-details.screen.styles";
 import useRecoveryStore from "store/recovery/recovery.store";
 import { useEffect, useState } from "react";
@@ -85,6 +85,11 @@ export const VoucherDetailsScreen = () => {
 
                     <IconSettings
                       onClick={() => navigate(RoutePath.walletSettings)}
+                      style={{ cursor: "pointer" }}
+                    />
+
+                      <IconPlus
+                      onClick={() => navigate(RoutePath.createRecovery)}
                       style={{ cursor: "pointer" }}
                     />
                   </Group>

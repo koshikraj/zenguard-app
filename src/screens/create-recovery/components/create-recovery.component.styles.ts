@@ -2,8 +2,12 @@ import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
   progressbox: {
-    width: "515px",
-    maxWidth: "100%",
+    minWidth: "515px",
+    // maxWidth: "100%",
+    [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+      width: "100%",
+      padding: "0px",
+    },
 
     [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
       width: "100%",
@@ -15,9 +19,18 @@ export const useStyles = createStyles((theme) => ({
     flexDirection: "row",
     gap: "40px",
     maxWidth: "100%",
-    [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-      flexDirection: "column-reverse",
+   
+    [`@media (max-width: 700px)`]: {
+   
+      flexDirection: 'column',
       gap: "20px",
+      width:'100%'
+    },
+    [`@media (max-width: 400px)`]: {
+     
+      flexDirection: "column",
+      gap: "20px",
+      width:'100%'
     },
   },
   button: {
@@ -49,8 +62,7 @@ export const useStyles = createStyles((theme) => ({
     flex: "2",
     minWidth: "591px",
     [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-      maxWidth: "100%",
-      minWidth: "100%",
+      width:'100%'
     },
   },
 
