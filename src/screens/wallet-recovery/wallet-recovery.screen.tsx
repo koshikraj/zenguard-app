@@ -2,17 +2,21 @@ import { Container } from "@mantine/core";
 import { UserAuth } from "./components/user-auth.component";
 import { useStyles } from "./create-recovery.screen.styles";
 import useRecoveryStore from "../../store/recovery/recovery.store";
-import { RecoveryCreationSuccess } from "./components/create-recovery-success.component";
+import { BiometricAuth } from "./components/biometric-auth.component";
 
 export const WalletRecoveryScreen = () => {
   const { classes } = useStyles();
 
-  const createStep = useRecoveryStore((state: any) => state.createStep);
+  const { recoveryType } = useRecoveryStore(
+    (state: any) => state
+  );
+
+  console.log(recoveryType)
 
   return (
     <Container className={classes.createScreenContainer}>
-      {createStep === 1 && <UserAuth />}
-      {createStep === 2 && <RecoveryCreationSuccess />}
+      {recoveryType === "email" && <UserAuth />}
+      {recoveryType === "biometric" && <BiometricAuth />}
     </Container>
   );
 };

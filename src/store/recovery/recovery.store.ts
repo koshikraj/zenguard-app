@@ -5,7 +5,9 @@ const useRecoveryStore = create((set) => ({
   fetching: false,
   roleName: "",
   accountDetails: {},
+  authDetails: {},
   safeId: '',
+  recoveryType: '',
 
   setRoleName: (name: string) => {
     set((state: any) => ({
@@ -31,6 +33,10 @@ const useRecoveryStore = create((set) => ({
     set((state: any) => ({
       createStep: step,
     })),
+  setRecoveryType: (type: any) =>
+    set((state: any) => ({
+      recoveryType: type,
+    })),
   formData: {},
   setFormData: (data: object) =>
     set((state: any) => ({
@@ -42,6 +48,10 @@ const useRecoveryStore = create((set) => ({
   setAccountDetails: (data: object) =>
     set((state: any) => ({
       accountDetails: data,
+    })),
+  setAuthDetails: (data: object) =>
+    set((state: any) => ({
+      authDetails: data,
     })),
 
   recoveryDetails: {},

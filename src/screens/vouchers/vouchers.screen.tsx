@@ -1,5 +1,5 @@
 import { Button, Center, Container, Stack } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GenericCard, Image, Title, VoucherCard } from "../../components";
 import { useStyles } from "./vouchers.screen.styles";
 import { useNavigate } from "react-router";
@@ -9,18 +9,21 @@ import { useStores } from "store";
 //@ts-ignore
 import EmptyState from "../../assets/images/empty.svg";
 import useRecoveryStore from "store/recovery/recovery.store";
-import { useServices } from "services";
 import { Wallet } from "utils";
-import { utils } from "ethers";
+
+
+const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
 
 export const VouchersScreen = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
   let { code } = useParams();
   const wallet = new Wallet();
-  const { setFetching, setSafeId, accountDetails } = useRecoveryStore(
+  const { setFetching, setSafeId, accountDetails, setAuthDetails, setRecoveryType } = useRecoveryStore(
     (state: any) => state
   );
+
+  console.log(accountDetails.authResponse?.safes)
 
   const [modalActive, setModalActive] = useState(code ? true : false);
 
@@ -31,42 +34,45 @@ export const VouchersScreen = () => {
     
   };
 
+  useEffect(() => {
+
+    ;(async () => {
+
+    var authStore = localStorage.getItem("openlogin_store");
+    if (authStore) { 
+      setAuthDetails(JSON.parse(authStore))
+    }
+    
+  })()   
+  }, [])
+
+
+
   return (
     <Container>
       <Container className={classes.voucherScreenContainer}>
         <Container sx={{ padding: 0, marginTop: "42px" }}>
-          <Title text="Create a New Wallet" />
+          <Title text="Recover your Wallet" />
         </Container>
         <div className={classes.actionsContainer}>
           <GenericCard
-            title="Create"
-            name="add"
+            title="Biometric"
+            name="biometric"
             onClick={() => {
-              navigate(RoutePath.createRecovery);
+              setRecoveryType('biometric');
+              navigate(RoutePath.walletRecovery);
             }}
           />
           <GenericCard
-            title="Recover"
-            name="redeem"
+            title="Email"
+            name="email"
             onClick={() => {
+              setRecoveryType('email');
               navigate(RoutePath.walletRecovery);
             }}
           />
         </div>
 
-        <Title text="My Wallets" />
-
-        <div className={classes.vouchersContainer}>
-
-          {accountDetails.authResponse?.safes?.map((v: any) => (
-            <div key={v}>
-              <VoucherCard
-                address={v}
-                onClick={() => safeCardHandler(v)}
-              />
-            </div>
-          ))}
-        </div>
       </Container>
     </Container>
   );

@@ -190,7 +190,7 @@ export const CreateRecoveryForm = () => {
           justifyContent: "center",
         }}
         withCloseButton={false}
-        overlayOpacity={0.5}
+        opacity={0.5}
         size={320}
       >
         <Box sx={{ padding: "20px" }}>

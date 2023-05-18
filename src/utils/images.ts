@@ -1,6 +1,6 @@
 export const images = {
-  add: "require('../assets/icons/create.svg').default",
-  redeem: "require('../assets/icons/redeem.svg').default",
+  biometric: "require('../assets/icons/biometric.png').default",
+  email: "require('../assets/icons/email.png').default",
   success: "require('../assets/icons/success').default",
 };
 

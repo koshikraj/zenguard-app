@@ -21,7 +21,8 @@ import { GoogleButton, MetaMaskButton } from "../../components";
 import { OAuthProvider } from "@magic-ext/oauth";
 import { ethers } from 'ethers'
 
-import { SafeEventEmitterProvider } from '@web3auth/base'
+import { SafeEventEmitterProvider, CHAIN_NAMESPACES } from '@web3auth/base'
+import { Web3Auth } from "@web3auth/modal";
 import { SafeAuthKit, SafeAuthProviderType, SafeAuthSignInData } from '@safe-global/auth-kit'
 import SafeServiceClient from '@safe-global/safe-service-client'
 import EthersAdapter from '@safe-global/safe-ethers-lib'
@@ -46,7 +47,7 @@ export function LoginScreen(props: any) {
   let navigate = useNavigate();
 
   const [signingIn, setSigningIn] = useState(false);
-  const [loginType, setLoginType] = useState("wallet");
+  const [loginStatus, setLoginStatus] = useState(false);
 
   const { setAccountDetails } = useRecoveryStore(
     (state: any) => state
@@ -64,19 +65,42 @@ export function LoginScreen(props: any) {
 
   useEffect(() => {
     ;(async () => {
-      await setSafeAuth(
-        await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
+
+
+      var authStore = localStorage.getItem("openlogin_store");
+      if(authStore && JSON.parse(authStore).idToken) {
+        setSigningIn(true);  
+      }
+      setLoginStatus(false);
+      const safeA =  await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
           
-          chainId: "0x14A33",
-          txServiceUrl: txServiceUrl, // Optional. Only if want to retrieve related safes
-          authProviderConfig: {
-            rpcTarget: RPC_URL,
-            clientId: 'BAcCop_qaWVfw15peOnVq8xd8KefD3UvZ-3bKip0RNy0w1J0Z8ZKNNzWiFW97a66S-UGr-oZpzdk1hE8SwWmy00',
-            network: 'testnet',
-            theme: 'dark'
-          }
-        })
-      )
+        chainId: "0x14A33",
+        txServiceUrl: txServiceUrl, // Optional. Only if want to retrieve related safes
+        authProviderConfig: {
+          rpcTarget: RPC_URL,
+          clientId: 'BAcCop_qaWVfw15peOnVq8xd8KefD3UvZ-3bKip0RNy0w1J0Z8ZKNNzWiFW97a66S-UGr-oZpzdk1hE8SwWmy00',
+          network: 'testnet',
+          theme: 'dark'
+        }
+      })
+      setLoginStatus(true);
+      setSafeAuth(safeA);
+    
+
+      if(authStore && JSON.parse(authStore).idToken) {
+      
+      
+      const response = await safeA?.signIn();
+      setSafeAuthSignInResponse(response!)
+      setProvider(safeA?.getProvider() as SafeEventEmitterProvider)
+
+    setAccountDetails({provider: safeA?.getProvider() as SafeEventEmitterProvider, authResponse: response, safeAuth: safeA })
+
+      navigate(RoutePath.account)
+      }
+
+      // console.log(response)
+
     })()
   }, [])
 
@@ -86,17 +110,43 @@ export function LoginScreen(props: any) {
     if (!safeAuth) return
 
 
+    // const web3auth = new Web3Auth({
+    //   clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
+    //   web3AuthNetwork: 'testnet',
+    //   chainConfig: {
+    //     chainNamespace: CHAIN_NAMESPACES.EIP155,
+    //     chainId: "0x14A33",
+    //     rpcTarget: RPC_URL,
+    //   },
+    //   uiConfig: {
+    //     theme: 'dark',
+    //     loginMethodsOrder: ['google', 'facebook']
+    //   }
+    // });
+
+    
+
+    console.log(safeAuth.safeAuthData)
 
     const response = await safeAuth.signIn()
+
+    console.log(safeAuth.safeAuthData)
+    // await web3auth.initModal()
+
+    // await web3auth.connect()
+    // await web3auth.connect()
+    // const userInfo = await web3auth.getUserInfo()
+    // console.log(userInfo)
+    
     console.log('SIGN IN RESPONSE: ', response)
 
     console.log(response)
     setSafeAuthSignInResponse(response)
     setProvider(safeAuth.getProvider() as SafeEventEmitterProvider)
 
-    setAccountDetails({provider: safeAuth.getProvider() as SafeEventEmitterProvider, authResponse: response})
+    setAccountDetails({provider: safeAuth.getProvider() as SafeEventEmitterProvider, authResponse: response, safeAuth: safeAuth} )
 
-    navigate(RoutePath.recovery)
+    navigate(RoutePath.account)
   }
 
 
@@ -122,7 +172,7 @@ export function LoginScreen(props: any) {
           justifyContent: "center",
         }}
         withCloseButton={false}
-        overlayOpacity={0.5}
+        // opacity={0.5}
         size={320}
       >
         <Box radius="md" sx={{ padding: "20px" }} {...props}>
@@ -139,7 +189,7 @@ export function LoginScreen(props: any) {
             </Container>
             <Text sx={{ textAlign: "center" }}>
               {" "}
-              Please sign the message on Wallet if prompted. This may take a
+              Signing you in. This may take a
               couple of seconds ...
             </Text>
           </Group>
@@ -182,12 +232,13 @@ export function LoginScreen(props: any) {
               type="submit"
               fullWidth
               onClick={handleLogin}
+              disabled={!loginStatus}
               style={{
                 background:
                   "linear-gradient(132.56deg, #61FF47 -20.89%, #89B8FF 99.53%, #FF70F1 123.47%)",
               }}
             >
-              Get started
+              { loginStatus ? "Get started" : "Wait for a second ..." }
             </Button>
           </Group>
 

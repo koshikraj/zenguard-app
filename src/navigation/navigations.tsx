@@ -12,7 +12,8 @@ import {
   WalletSettings,
   WalletNotification,
   VoucherDetailsScreen,
-  WalletRecoveryScreen
+  WalletRecoveryScreen,
+  Account
 } from "../screens";
 import { GlobalStyle } from "../utils";
 import { RoutePath } from "./route-path";
@@ -22,7 +23,6 @@ export const Navigation = () => {
     <Routes>
       <Route path={RoutePath.login} element={<LoginScreen />} />
       <Route path={RoutePath.recovery} element={<VouchersScreen />} />
-      <Route path={RoutePath.wallet} element={<VoucherDetailsScreen />} />
       <Route path={RoutePath.walletRecovery} element={<WalletRecoveryScreen />} />
 
 
@@ -34,6 +34,8 @@ export const Navigation = () => {
       />
 
       <Route element={<RequireAuth />}>
+      <Route path={RoutePath.account} element={<Account />} />
+      <Route path={RoutePath.wallet} element={<VoucherDetailsScreen />} />
         <Route path={RoutePath.account} element={<ProfileScreen />} />
         <Route
           path={RoutePath.createRecovery}

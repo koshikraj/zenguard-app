@@ -1,3 +1,5 @@
+//@ts-ignore
+import MetaSafe from "../../../assets/images/zen-safe.svg";
 import { forwardRef, useContext, useEffect, useState } from "react";
 import {
   Container,
@@ -40,6 +42,7 @@ import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 import { RoutePath } from "navigation";
 import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
 import axios from "axios";
+import { client } from "@passwordless-id/webauthn";
 
 
 
@@ -49,7 +52,7 @@ const progressMessage = [{text: "Recovering the wallet", image: Zenguard}, {text
 const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
 const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
-export const UserAuth = () => {
+export const BiometricAuth = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
 
@@ -116,6 +119,44 @@ export const UserAuth = () => {
   }
 
 
+  const authWebAuthn = async () => {
+
+
+    // setRecoveryEmailHash(crypto.createHash('sha256').update(userInfo.email!).digest('hex'));
+
+    console.log(recoveryEmailHash);
+
+    setCreating(true);
+
+    try {
+      const accountDetails = await axios.get(`${recoveryAPI}/recovery-account`, { params: {
+        recoveryEmailHash: recoveryEmailHash
+      }})
+      if(accountDetails.data.status) {
+
+        console.log(accountDetails.data.data.webAuthnCreds.id)
+
+
+        const challenge = "56535b13-5d93-4194-a282-f234c1c24500"
+        const authentication = await client.authenticate([accountDetails.data.data.webAuthnCreds.id], challenge, {
+            "authenticatorType": "auto",
+            "userVerification": "required",
+            "timeout": 60000
+        })
+
+        setAuthenticated(true);
+
+      }
+      setCreating(false);
+
+    }
+  catch(e) {
+    setCreating(false);
+    console.log(e);
+  }
+  }
+
+
   const recoverWallet = async () => {
 
     setCreating(true);
@@ -125,6 +166,7 @@ export const UserAuth = () => {
         recoveryEmailHash: recoveryEmailHash,
         newOwner: newOwner,
         idToken: idToken,
+        type: 'biometric'
       })
       console.log(recoveryResponse)
       setSafeId(recoveryResponse.data.data.safeAddress)
@@ -186,24 +228,43 @@ export const UserAuth = () => {
         </Group>
         <Stack justify="flex-start">
 
+        <Container sx={{ padding: 0, marginBottom: "46px" }}>
+          <div className={classes.voucherImage}>
+            <Center style={{ height: "100%" }}>
+              <Center style={{ flexDirection: "column" }}>
+                <Image src={MetaSafe} width={200} />
+                <Text mt={10} weight={600} style={{ color: "white" }}>
+                  {}
+                </Text>
+              </Center>
+            </Center>
+          </div>
+          </Container>
 
-
+          <TextInput label="Your Recovery email" placeholder="Enter Your Recovery email" onChange={(event)=>setRecoveryEmailHash(crypto.createHash('sha256').update(event.target.value).digest('hex'))} />
          
-        { !authenticated && <Alert icon={<IconPlugConnected size={32} />} title="Verify your email!" color="grape" radius="lg">
-            Authenticate with you social accounts to verify your email.
+        { !authenticated && <Alert icon={<IconPlugConnected size={32} />} title="Verify your identity through biometric!" color="grape" radius="lg">
+            Authenticate with your devide Touch ID/ Face ID to verify your biometric.
         </Alert>
        }
 
-        { authenticated && <Alert icon={<IconCheck size={32} />} title="Email verified!" color="green" radius="lg">
-            Your email is successfully verified proceed to recover the wallet.
+        { authenticated && <Alert icon={<IconCheck size={32} />} title="Biometric verified!" color="green" radius="lg">
+            Your biometric is successfully verified proceed to recover the wallet.
           </Alert> 
           }
+
+      {
+         authenticated && <TextInput label="New Wallet Owner" placeholder="Enter New Wallet Owner Address" onChange={(event)=>setNewOwner(event.target.value)} />
+
+       }
+
+
          
           <Button
             loading={creating}
             className={classes.button}
             onClick={() => {
-              authenticated ? recoverWallet() : authenticateUser(); 
+              authenticated ? recoverWallet() : authWebAuthn(); 
               
             }}
             style={{

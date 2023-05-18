@@ -78,16 +78,18 @@ export const CreateRecoveryForm = () => {
 
   const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
-
+  const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
   
   
   const createSafe = async () => {
   
     setCreating(true);
+    const provider = new ethers.providers.JsonRpcProvider(RPC_URL)
+    const safeDeployer = new ethers.Wallet(process.env.REACT_APP_GUARDIAN_WALLET_KEY!, provider)
     const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider).getSigner(0)
     const ethAdapter = new EthersAdapter({
       ethers,
-      signerOrProvider:safeOwner
+      signerOrProvider:safeDeployer
     })
 
     
@@ -108,6 +110,14 @@ export const CreateRecoveryForm = () => {
     const safeSdk = await safeFactory.deploySafe({ safeAccountConfig })
 
     setSafeId(safeSdk.getAddress())
+
+    const eoa = accountDetails.authResponse.eoa;
+
+    let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+
+    defaultWallet[eoa] = safeSdk.getAddress()
+
+    localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
 
     setCreating(false);
 
@@ -133,7 +143,7 @@ export const CreateRecoveryForm = () => {
           justifyContent: "center",
         }}
         withCloseButton={false}
-        overlayOpacity={0.5}
+        // overlayOpacity={0.5}
         size={320}
       >
         <Box sx={{ padding: "20px" }}>

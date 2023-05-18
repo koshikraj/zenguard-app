@@ -8,8 +8,9 @@ import {
 } from "../primitives/image/image.component";
 import { useStyles } from "./generic-card.component.styles";
 
-import Create from "../../assets/icons/create.svg";
-import Redeem from "../../assets/icons/redeem.svg";
+import Fingerprint from "../../assets/icons/fingerprint.png";
+import Mail from "../../assets/icons/mail.png";
+import { Icon123 } from "@tabler/icons";
 
 export interface GenericCardProps {
   title: string;
@@ -20,14 +21,14 @@ export interface GenericCardProps {
 export const GenericCard: React.FC<GenericCardProps & ImageComponentProps> = (
   props
 ) => {
-  const { width, title, name = "add", onClick } = props;
+  const { width, title, name = "biometric", onClick } = props;
 
-  const src = name === "redeem" ? Redeem : Create;
+  const src = name === "email" ? Mail : Fingerprint;
 
   const { classes } = useStyles();
   return (
     <Card className={classes.card} onClick={onClick}>
-      <Image src={src} width={width} className={classes.image} />
+      <Image src={src} width={80} className={classes.image} />
       <p className={classes.p}>{title}</p>
     </Card>
   );

@@ -10,7 +10,7 @@ export * from "./primitives/text/text.component";
 export * from "./primitives/text-area/text-area.component";
 export * from "./common/container/container.component";
 
-export * from "./common/navbar/navbar.component";
+export * from "./common/header/header.component";
 export * from "./common/app-layout/app-layout.component";
 
 export * from "./primitives/image/image.component";
