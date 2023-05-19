@@ -11,7 +11,8 @@ import { useStyles } from "./generic-card.component.styles";
 import Fingerprint from "../../assets/icons/fingerprint.png";
 import Limit from "../../assets/icons/limit.png";
 import Session from "../../assets/icons/session.png";
-import { Icon123 } from "@tabler/icons";
+import Email from "../../assets/icons/mail.png";
+import NFT from "../../assets/icons/ape.png";
 
 export interface GenericCardProps {
   title: string;
@@ -19,17 +20,23 @@ export interface GenericCardProps {
   onClick?: any;
 }
 
+const images = {
+  "limit": Limit,
+  "biometric": Fingerprint,
+  "session": Session,
+  "email": Email,
+  "nft": NFT,
+}
+
 export const GenericCard: React.FC<GenericCardProps & ImageComponentProps> = (
   props
 ) => {
   const { width, title, name = "biometric", onClick } = props;
 
-  const src = name === "limit" ? Limit : ( name === "biometric" ? Fingerprint : Session );
-
   const { classes } = useStyles();
   return (
     <Card className={classes.card} onClick={onClick}>
-      <Image src={src} width={80} className={classes.image} />
+      <Image src={images[name]} width={80} className={classes.image} />
       <p className={classes.p}>{title}</p>
     </Card>
   );

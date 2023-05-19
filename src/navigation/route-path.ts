@@ -16,6 +16,8 @@ export enum RoutePath {
   notifications = "/notifications",
   walletSettings = "/wallet-settings",
   wallet = "/wallet",
+  dapps = "/dapps",
+  nftDApp = "/nft-dapp",
   walletRecovery = "/wallet-recovery",
   transactionGuard = "/transaction-guards",
 }

@@ -14,7 +14,9 @@ import {
   VoucherDetailsScreen,
   WalletRecoveryScreen,
   Account,
-  TransactionGuards
+  TransactionGuards,
+  DAppsScreen,
+  NFTDetailsScreen
 } from "../screens";
 import { GlobalStyle } from "../utils";
 import { RoutePath } from "./route-path";
@@ -38,6 +40,8 @@ export const Navigation = () => {
       <Route element={<RequireAuth />}>
       <Route path={RoutePath.account} element={<Account />} />
       <Route path={RoutePath.wallet} element={<VoucherDetailsScreen />} />
+      <Route path={RoutePath.nftDApp} element={<NFTDetailsScreen />} />
+      <Route path={RoutePath.dapps} element={<DAppsScreen />} />
         <Route path={RoutePath.account} element={<ProfileScreen />} />
         <Route
           path={RoutePath.createRecovery}

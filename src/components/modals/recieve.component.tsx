@@ -15,10 +15,11 @@ import QRCode from "react-qr-code";
 export interface RecieveModalProps {
   recieveModal: boolean;
   setRecieveModal: any;
+  address: string;
 }
 
 export const RecieveModal = (props: RecieveModalProps) => {
-  const { recieveModal, setRecieveModal } = props;
+  const { address, recieveModal, setRecieveModal } = props;
 
   const clipboard = useClipboard({ timeout: 500 });
 
@@ -36,17 +37,17 @@ export const RecieveModal = (props: RecieveModalProps) => {
         <Stack>
           <Paper withBorder>
             <Center>
-              <QRCode value="0x9264c4dd3ef78ac7d7fc37605b6a870a2803dc3b" />
+              <QRCode value={ address } />
             </Center>
           </Paper>
 
           <Input
-            value={"0x9264c4dd3ef78ac7d7fc37605b6a870a2803dc3b"}
+            value={address}
             rightSection={
               <IconCopy
                 color={clipboard.copied ? "green" : "grey"}
                 onClick={() =>
-                  clipboard.copy("0x9264c4dd3ef78ac7d7fc37605b6a870a2803dc3b")
+                  clipboard.copy(address)
                 }
               >
                 {clipboard.copied ? "Copied" : "Copy"}

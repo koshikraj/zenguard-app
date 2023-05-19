@@ -212,10 +212,6 @@ const options: MetaTransactionOptions = {
     }
 
     } while(taskStatus?.taskState != 'ExecSuccess') {
-
-    
-
-
     }
     
     // let txResponse = await safeSdk.executeTransaction(enableModuleTrans)
@@ -295,6 +291,8 @@ const options: MetaTransactionOptions = {
   }
   
   }
+
+
 
   interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
     image: string;

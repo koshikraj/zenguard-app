@@ -134,7 +134,7 @@ export const VoucherDetailsScreen = () => {
                   </Box>
                 </Center>
 
-                <Actions />
+                <Actions address={safeId}/>
                 {/* conditional rendering */}
 
                 {/* <LockedWallet /> */}

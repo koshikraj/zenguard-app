@@ -14,5 +14,7 @@ export * from "./wallet-notification/wallet-notification.screen";
 
 export * from "./wallet-recovery/wallet-recovery.screen";
 export * from "./transaction-guard/transaction-guard-screen";
+export * from "./dapps/dapps-screen";
+export * from "./nft-dapp/nft-details.screen";
 
 export * from "./account/account";

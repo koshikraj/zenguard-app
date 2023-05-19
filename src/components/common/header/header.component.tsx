@@ -132,7 +132,7 @@ export const Head = (props) => {
         <Group position="apart">
           <Image
             onClick={() => {
-              navigate(RoutePath.recovery);
+              navigate(RoutePath.account);
               setFormData({});
               setCreateStep(1);
             }}

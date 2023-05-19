@@ -28,7 +28,9 @@ export * from "./send/send.component";
 export * from "./share-modal/share-modal.component";
 
 export * from "./common/empty-state/empty-state.component";
+export * from "./common/nft-state/nft-state.component";
 export * from "./modals/claim.component";
 
 export * from "./modals/recieve.component";
 export * from "./modals/send.component";
+
