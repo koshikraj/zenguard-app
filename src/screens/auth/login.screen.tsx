@@ -109,38 +109,9 @@ export function LoginScreen(props: any) {
   const handleLogin = async () => {
     if (!safeAuth) return
 
-
-    // const web3auth = new Web3Auth({
-    //   clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
-    //   web3AuthNetwork: 'testnet',
-    //   chainConfig: {
-    //     chainNamespace: CHAIN_NAMESPACES.EIP155,
-    //     chainId: "0x14A33",
-    //     rpcTarget: RPC_URL,
-    //   },
-    //   uiConfig: {
-    //     theme: 'dark',
-    //     loginMethodsOrder: ['google', 'facebook']
-    //   }
-    // });
-
-    
-
-    console.log(safeAuth.safeAuthData)
-
     const response = await safeAuth.signIn()
 
-    console.log(safeAuth.safeAuthData)
-    // await web3auth.initModal()
 
-    // await web3auth.connect()
-    // await web3auth.connect()
-    // const userInfo = await web3auth.getUserInfo()
-    // console.log(userInfo)
-    
-    console.log('SIGN IN RESPONSE: ', response)
-
-    console.log(response)
     setSafeAuthSignInResponse(response)
     setProvider(safeAuth.getProvider() as SafeEventEmitterProvider)
 

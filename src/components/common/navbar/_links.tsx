@@ -10,6 +10,7 @@ import {
 import { ThemeIcon, UnstyledButton, Group, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { RoutePath } from 'navigation/route-path';
+import useRecoveryStore from 'store/recovery/recovery.store';
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -21,7 +22,8 @@ interface MainLinkProps {
 function MainLink({ icon, color, label, value }: MainLinkProps) {
 
   const navigate = useNavigate();
-  
+
+
   return (
     <UnstyledButton
       sx={(theme) => ({
@@ -49,14 +51,23 @@ function MainLink({ icon, color, label, value }: MainLinkProps) {
   );
 }
 
-const data = [
-  { icon: <IconWallet size="2em" />, color: 'blue', label: 'Account', value: RoutePath.account },
-  { icon: <IconApps size="2rem" />, color: 'teal', label: 'DApp Transactions', value: RoutePath.dapps  },
-  { icon: <IconShieldCheck size="2rem" />, color: 'violet', label: 'Recovery', value: RoutePath.recovery  },
-  { icon: <Icon2fa size="2rem" />, color: 'grape', label: 'Transaction Guard', value: RoutePath.transactionGuard  },
-];
+
 
 export function MainLinks() {
-  const links = data.map((link) => <MainLink {...link} key={link.value} />);
+
+  const { accountDetails } = useRecoveryStore(
+    (state: any) => state
+  );
+  
+  const isSignedIn: boolean = accountDetails.provider;
+  
+  
+  const data = [
+    { icon: <IconWallet size="2em" />, color: 'blue', label: 'Account', value: RoutePath.account, visible: true },
+    { icon: <IconApps size="2rem" />, color: 'teal', label: 'DApp Transactions', value: RoutePath.dapps, visible: isSignedIn  },
+    { icon: <IconShieldCheck size="2rem" />, color: 'violet', label: 'Recovery', value: RoutePath.recovery, visible: !isSignedIn },
+    { icon: <Icon2fa size="2rem" />, color: 'grape', label: 'Transaction Guard', value: RoutePath.transactionGuard, visible: isSignedIn },
+  ];
+  const links = data.map((link) => link.visible && <MainLink {...link} key={link.value} />);
   return <div>{links}</div>;
 }

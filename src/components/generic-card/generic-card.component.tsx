@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { Card } from "@mantine/core";
+import { Card, Badge } from "@mantine/core";
 
 import {
   Image,
@@ -15,6 +15,7 @@ import Email from "../../assets/icons/mail.png";
 import NFT from "../../assets/icons/ape.png";
 
 export interface GenericCardProps {
+  soon?: boolean;
   title: string;
 
   onClick?: any;
@@ -31,11 +32,12 @@ const images = {
 export const GenericCard: React.FC<GenericCardProps & ImageComponentProps> = (
   props
 ) => {
-  const { width, title, name = "biometric", onClick } = props;
+  const { soon, width, title, name = "biometric", onClick } = props;
 
   const { classes } = useStyles();
   return (
     <Card className={classes.card} onClick={onClick}>
+      {soon && <Badge>Coming soon</Badge>}
       <Image src={images[name]} width={80} className={classes.image} />
       <p className={classes.p}>{title}</p>
     </Card>

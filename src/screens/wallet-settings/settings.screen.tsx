@@ -16,9 +16,13 @@ import {
   TextInput, 
   SegmentedControl,
   Avatar,
+  Timeline,
+  Notification,
+  Switch,
+  useMantineTheme
 } from "@mantine/core";
 
-import { IconHammer, IconFingerprint, IconMail, IconDatabase, IconScan } from '@tabler/icons';
+import { IconHammer, IconFingerprint, IconMail, IconDatabase, IconScan, IconGitBranch, IconX } from '@tabler/icons';
 
 // import Safe, { SafeFactory } from "@safe-global/safe-core-sdk";
 import Safe, { getSafeContract, EthersAdapter, SafeFactory } from '@safe-global/protocol-kit';
@@ -42,6 +46,7 @@ import recoveryModule from "../../artifacts/SocialRecoveryModule.json";
 import ZenGuard from "../../assets/icons/zenguard.svg";
 import { IconCheck } from "@tabler/icons";
 import { client, server } from "@passwordless-id/webauthn";
+import { register } from "@passwordless-id/webauthn/dist/esm/client";
 
 
 const oauthGuardian = '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA';
@@ -71,6 +76,7 @@ const useStyles = createStyles((theme) => ({
 export const WalletSettings = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
+  const theme = useMantineTheme();
 
   const { accountDetails, safeId, setSafeId } = useRecoveryStore(
     (state: any) => state
@@ -82,6 +88,9 @@ export const WalletSettings = () => {
   const [recoveryType, setRecoveryType]: any = useState('email');
   const [claimType, setClaimType]: any = useState();
   const [creating, setCreating] = useState(false);
+  const [ guard, setGuard ] = useState(false);
+  const [registering, setRegistering] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [executedHash, setExecutedHash] = useState("");
   
 
@@ -91,6 +100,9 @@ export const WalletSettings = () => {
 
   const registerBiometric = async () => {
 
+  try {  
+  setRegistering(true); 
+  setRegistrationSuccess(false); 
   const challenge = "a7c61ef9-dc23-4806-b486-2428938a547e"
   const registration = await client.register("ZenGuard Recovery", challenge, {
   "authenticatorType": "auto",
@@ -101,12 +113,17 @@ export const WalletSettings = () => {
 })
 
 console.log(registration)
+setRegistering(false); 
+setRegistrationSuccess(true);
 
 setWebAuthnData(registration);
+  }
+  catch(e) {
 
+    setRegistering(false); 
 
+  }
 
-// console.log(authenticationParsed)
 
 
   }
@@ -343,7 +360,7 @@ const options: MetaTransactionOptions = {
             >
               <Loader />
               
-              <Text mt={"lg"} align='center'> Adding recovery module to your wallet
+              <Text mt={"lg"} align='center'> Enabling recovery on your wallet
               <Box sx={{ paddingTop: "20px" }}><Center><Image src={ZenGuard} width={50}/></Center> </Box>
               </Text>
               
@@ -452,39 +469,90 @@ const options: MetaTransactionOptions = {
         
         
         <Group sx={{ justifyContent: "space-between" }}>
-        <Text size="md" weight={400}>
-          Register your Biometric 🛡️
-        </Text>{" "}
 
-        <Button
-            loading={creating}
-            onClick={() => {
-              registerBiometric();
-            }}
-            leftIcon={<IconScan />} 
-            variant="default"
-            color="dark"
-          >
-            Register Now
-          </Button>
-          </Group>
+            <Timeline active={registrationSuccess ? 1 : 0} bulletSize={30} lineWidth={3}>
+            <Timeline.Item bullet={<IconScan size={20} />} title="Register your Biometric 🐾"   style={{
+              paddingBottom: 30
+            }}>
+                <Text color="dimmed" size="sm"  style={{
+              paddingTop: 20,  paddingBottom: 20  }}> Authenticate now with Touch ID or Face ID</Text>
+            
+                <Button
+                // loading={registering}
+                onClick={() => {
+                  registerBiometric();
+                }}
+                leftIcon={<IconScan />} 
+                variant="default"
+                color="dark"
+              >
+                Register Now
+              </Button>
 
-              <TextInput
+              { registering && <Notification
+                  loading
+                  title="Registering your Touch ID/ Face ID"
+                  withCloseButton={false}
+                  style={{
+                    marginTop: 30
+                  }}
+               >
+              Authenticating Touch ID or Face ID with your device
+               </Notification> }
+
+               { registrationSuccess && <Notification
+                  // loading
+                  icon={<IconCheck size={20} />}
+                  color="teal"
+                  title="Registration Scuccessful"
+                  withCloseButton={false}
+                  style={{
+                    marginTop: 30
+                  }}
+               >
+              Successfully registered Face ID/ Touch ID using your device
+               </Notification> }
+              </Timeline.Item>
+
+            <Timeline.Item bullet={<IconMail size={12} />} title="Email to identify recovery" style={{
+              paddingBottom: 35 }}>
+              
+              <Text color="dimmed" size="sm"  style={{
+              paddingTop: 20,  paddingBottom: 20  }}> Provide an email ID to idenity this recovery later</Text>
+                
+            <TextInput
               type="email"
               placeholder="Enter your email"
-              label="Email for recovery"
+              // label="Email for recovery"
               rightSectionWidth={92}
               onChange={(event) => {
                 setWalletBeneficiary(event.target.value);
               }}
-              /> </>
+              />
+
+            </Timeline.Item>
+          </Timeline>
+          </Group>
+
+             </>
 
           }
-          
 
-          {/* advanced */}
-
-   
+    <Switch
+        checked={guard}
+        onChange={(event) => setGuard(event.currentTarget.checked)}
+        color="teal"
+        size="md"
+        label="Enable additional recovery guard"
+        thumbIcon={
+          guard ? (
+            <IconCheck size="0.8rem" color={theme.colors.teal[theme.fn.primaryShade()]} stroke={3} />
+          ) : (
+            <IconX size="0.8rem" color={theme.colors.red[theme.fn.primaryShade()]} stroke={3} />
+          )
+        }
+      /> 
+      { guard && <>
               <Select
                 label="Add additional recovery guard"
                 placeholder="Select Recovery Type"
@@ -516,9 +584,12 @@ const options: MetaTransactionOptions = {
               setSignalingPeriod(parseInt(event.target.value));
             }}
           />
+          </>
+          }
 
         <Button
             loading={creating}
+            disabled={!walletBeneficiary || !registrationSuccess }
             onClick={() => {
               createRecovery();
             }}
@@ -527,7 +598,7 @@ const options: MetaTransactionOptions = {
                 "linear-gradient(132.56deg, #61FF47 -20.89%, #89B8FF 99.53%, #FF70F1 123.47%)",
             }}
           >
-            Confirm
+            Create Recovery
           </Button>
 
           { executedHash && <Alert icon={<IconCheck size={32} />} title="Recovery created!" color="green" radius="lg">

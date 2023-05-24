@@ -18,8 +18,11 @@ import {
   Modal,
   Loader,
   Center,
+  Stepper,
+  Notification,
+  Divider
 } from "@mantine/core";
-import { IconAlertCircle, IconCheck, IconCopy, IconPlugConnected } from "@tabler/icons";
+import { IconAlertCircle, IconAt, IconCheck, IconCopy, IconPlugConnected, IconWallet } from "@tabler/icons";
 import useRecoveryStore from "store/recovery/recovery.store";
 import { useStyles } from "./create-recovery.component.styles";
 import { BackButton, ProgressStatus, Title, Image } from "../../../components";
@@ -46,7 +49,7 @@ import { client } from "@passwordless-id/webauthn";
 
 
 
-const progressMessage = [{text: "Recovering the wallet", image: Zenguard}, {text: "Recovering the wallet", image: Zenguard}]
+const progressMessage = [{text: "Verifying the biometrics", image: Zenguard}, {text: "Authenticating a new user", image: Zenguard},  {text: "Recovering the wallet", image: Zenguard}]
 
 
 const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
@@ -56,9 +59,6 @@ export const BiometricAuth = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
 
-
-  const [walletName, setWalletName] = useState("");
-  const [walletDescription, setWalletDescription] = useState("");
 
   const [recoveryEmailHash, setRecoveryEmailHash] = useState("");
   const [newOwner, setNewOwner] = useState("");
@@ -107,24 +107,19 @@ export const BiometricAuth = () => {
     const safeBeneficiary = new ethers.providers.Web3Provider(web3auth.provider as ethers.providers.ExternalProvider).getSigner(0)
 
     const userInfo = await web3auth.getUserInfo()
-    console.log(userInfo)
+  
+    const newEOA = await safeBeneficiary.getAddress();
 
-    setRecoveryEmailHash(crypto.createHash('sha256').update(userInfo.email!).digest('hex'));
-    setIdToken(userInfo.idToken!)
-    setNewOwner(await safeBeneficiary.getAddress())
+    setNewOwner(await safeBeneficiary.getAddress())   
 
-    setAuthenticated(true);
-    setCreating(false);
+    setProgressStage(2);
+
+    setCreating(false); 
 
   }
 
 
   const authWebAuthn = async () => {
-
-
-    // setRecoveryEmailHash(crypto.createHash('sha256').update(userInfo.email!).digest('hex'));
-
-    console.log(recoveryEmailHash);
 
     setCreating(true);
 
@@ -145,9 +140,10 @@ export const BiometricAuth = () => {
         })
 
         setAuthenticated(true);
+        setProgressStage(1);
+        setCreating(false);
 
       }
-      setCreating(false);
 
     }
   catch(e) {
@@ -170,8 +166,19 @@ export const BiometricAuth = () => {
       })
       console.log(recoveryResponse)
       setSafeId(recoveryResponse.data.data.safeAddress)
-      navigate(RoutePath.wallet)
+
+      let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+
+      console.log(newOwner)
+      console.log(recoveryResponse.data.data.safeAddress)
+
+      defaultWallet[newOwner] = recoveryResponse.data.data.safeAddress;
+  
+      localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
+
       setCreating(false);
+      navigate(RoutePath.wallet)
+     
 
     }
   catch(e) {
@@ -187,7 +194,7 @@ export const BiometricAuth = () => {
 
   return (
     <Container className={classes.box}>
-            <Modal
+      <Modal
         centered
         opened={creating}
         onClose={() => !creating}
@@ -241,27 +248,47 @@ export const BiometricAuth = () => {
           </div>
           </Container>
 
-          <TextInput label="Your Recovery email" placeholder="Enter Your Recovery email" onChange={(event)=>setRecoveryEmailHash(crypto.createHash('sha256').update(event.target.value).digest('hex'))} />
+          
          
-        { !authenticated && <Alert icon={<IconPlugConnected size={32} />} title="Verify your identity through biometric!" color="grape" radius="lg">
+        { !authenticated && 
+        <>
+        <TextInput icon={<IconAt size="0.8rem" />} label="Your Recovery email for verification" placeholder="Enter Your Recovery email" onChange={(event)=>setRecoveryEmailHash(crypto.createHash('sha256').update(event.target.value).digest('hex'))} />
+        <Alert icon={<IconPlugConnected size={32} />} title="Verify your identity through biometric!" color="grape" radius="lg">
             Authenticate with your devide Touch ID/ Face ID to verify your biometric.
         </Alert>
+        </>
        }
 
-        { authenticated && <Alert icon={<IconCheck size={32} />} title="Biometric verified!" color="green" radius="lg">
-            Your biometric is successfully verified proceed to recover the wallet.
-          </Alert> 
+        {  progressStage == 1 && <Notification icon={<IconCheck size="1.1rem" />} color="teal" title="Biometric verified!"  withCloseButton={false}>
+            Your biometric is successfully verified. Proceed to recover the wallet.
+              </Notification>
+          }
+
+      { progressStage == 2 && <Notification icon={<IconCheck size="1.1rem" />} color="teal" title="All set to recover!"  withCloseButton={false}>
+            You are now ready to recover your wallet to your account.
+              </Notification>
           }
 
       {
-         authenticated && <TextInput label="New Wallet Owner" placeholder="Enter New Wallet Owner Address" onChange={(event)=>setNewOwner(event.target.value)} />
+          progressStage == 1 && 
+         <>
+         <TextInput icon={<IconWallet size="0.8rem" />} label="New Wallet Owner" placeholder="Enter New Wallet Owner Address" onChange={(event)=>setNewOwner(event.target.value)} />
+         <Divider my="xs" label="OR" labelPosition="center" />
+
+         <Button
+            variant="default"
+            onClick={() => { authenticateUser()}}
+         
+          >
+             Create Account
+          </Button>
+         </>
 
        }
 
 
          
           <Button
-            loading={creating}
             className={classes.button}
             onClick={() => {
               authenticated ? recoverWallet() : authWebAuthn(); 
@@ -272,7 +299,7 @@ export const BiometricAuth = () => {
                 "linear-gradient(132.56deg, #61FF47 -20.89%, #89B8FF 99.53%, #FF70F1 123.47%)",
             }}
           >
-             { authenticated ? "Recover" : "Authenticate" }
+             { authenticated ? "Recover" : "Verify" }
           </Button>
         </Stack>
       </Paper>

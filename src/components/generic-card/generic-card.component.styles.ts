@@ -10,7 +10,7 @@ export const useStyles = createStyles((theme) => ({
     border:
       theme.colorScheme === "dark" ? "1px solid  #25262B" : "1px solid #DEE2E6",
     width: "200px",
-    height: "200px",
+    // height: "200px",
     background: theme.colorScheme === "dark" ? "#141517" : "white",
     boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.08)",
     borderRadius: "8px",

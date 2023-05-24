@@ -44,7 +44,7 @@ import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
 
 
 
-const progressMessage = [{text: "Creating a wallet using Safe", image: Safe}, {text: "Creating a wallet using Safe", image: Safe}]
+const progressMessage = [{text: "Setting up a new wallet. Powered by Safe ⛓🔒", image: Safe}, {text: "Setting up a new wallet. Powered by Safe ⛓🔒", image: Safe}]
 
 
 const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'

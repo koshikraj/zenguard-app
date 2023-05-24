@@ -58,6 +58,7 @@ export const TransactionGuards = () => {
         <GenericCard
             title="Create Session keys"
             name="session"
+            soon
             onClick={() => {
               setRecoveryType('session');
               // navigate(RoutePath.walletRecovery);
@@ -66,6 +67,7 @@ export const TransactionGuards = () => {
           <GenericCard
             title="Set Limit"
             name="limit"
+            soon
             onClick={() => {
               setRecoveryType('limit');
               // navigate(RoutePath.walletRecovery);
@@ -74,6 +76,7 @@ export const TransactionGuards = () => {
           <GenericCard
             title="2FA transaction"
             name="biometric"
+            soon
             onClick={() => {
               setRecoveryType('email');
               // navigate(RoutePath.walletRecovery);

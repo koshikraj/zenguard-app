@@ -34,14 +34,14 @@ import Flask from "../../../assets/icons/flask.svg";
 import Safe from "../../../assets/icons/safe.png";
 import { ethers } from "ethers";
 import EthersAdapter from "@safe-global/safe-ethers-lib";
-import { SafeAccountConfig, SafeFactory } from "@safe-global/safe-core-sdk";
+import { PredictSafeProps, SafeAccountConfig, SafeDeploymentConfig, SafeFactory } from "@safe-global/safe-core-sdk";
 import SafeServiceClient from "@safe-global/safe-service-client";
 import { Contract } from "ethers";
 import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 import { RoutePath } from "navigation";
 
 
-const progressMessage = [{text: "Creating a wallet using Safe", image: Safe}, {text: "Creating a wallet using Safe", image: Safe}]
+const progressMessage = [{text: "Setting up a new wallet. Powered by Safe ⛓🔒", image: Safe}, {text: "Setting up a new wallet. Powered by Safe ⛓🔒", image: Safe}]
 
 export const CreateRecoveryForm = () => {
   const { classes } = useStyles();
@@ -57,13 +57,6 @@ export const CreateRecoveryForm = () => {
   const [isBeneficiary, setIsBeneficiary] = useState(false);
   const [walletBeneficiary, setWalletBeneficiary]: any = useState('');
 
-  const [DdayTime, setDdayTime] = useState(0);
-
-  const [date, setDate] = useState(null);
-
-
-  const [seedPhrase, setSeedPhrase] = useState<any>("");
-  const [balanceLoader, setBalanceLoader] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [validator, setValidator] = useState(false);
@@ -93,33 +86,37 @@ export const CreateRecoveryForm = () => {
     })
 
     
-    const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+    // const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 
-    console.log(await safeService.getSafesByOwner(accountDetails.authResponse.eoa))
+    // console.log(await safeService.getSafesByOwner(accountDetails.authResponse.eoa))
 
     const safeFactory = await SafeFactory.create({ ethAdapter })
-
-    console.log(safeFactory)
-    
+    const saltNonce = (new Date().getTime() / 1000).toFixed();
+    const safeDeploymentConfig: SafeDeploymentConfig = {
+      saltNonce: saltNonce.toString()
+      // ... (optional params)
+    }
     const safeAccountConfig: SafeAccountConfig = {
       owners: [accountDetails.authResponse.eoa!],
       threshold: 1,
       // ... (optional params)
     }
 
-    const safeSdk = await safeFactory.deploySafe({ safeAccountConfig })
-
-    setSafeId(safeSdk.getAddress())
+    const predectedWalletAddress = await safeFactory.predictSafeAddress({ safeAccountConfig, safeDeploymentConfig })
+    
+    setSafeId(predectedWalletAddress)
 
     const eoa = accountDetails.authResponse.eoa;
 
     let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
 
-    defaultWallet[eoa] = safeSdk.getAddress()
+    defaultWallet[eoa] = predectedWalletAddress
 
     localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
 
     setCreating(false);
+
+    const safeSdk =  safeFactory.deploySafe({ safeAccountConfig, safeDeploymentConfig  })
 
     navigate(RoutePath.wallet)
   
@@ -212,8 +209,8 @@ export const CreateRecoveryForm = () => {
           />
           }
 
-      <Alert icon={<IconMoneybag size={32} />} title="Topup small amount!" color="grape" radius="lg">
-           Make sure to deposit some ETH on Base Goerli chain for safe creation: {accountDetails.authResponse.eoa}
+      <Alert icon={<IconMoneybag size={32} />} title="Gasless smart contract wallet!" color="grape" radius="lg">
+           Smart contract wallet will be deployed gasless on Base Goerli chain
         </Alert>  
          
 
