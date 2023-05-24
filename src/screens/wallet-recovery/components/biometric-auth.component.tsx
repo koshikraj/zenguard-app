@@ -164,17 +164,8 @@ export const BiometricAuth = () => {
         idToken: idToken,
         type: 'biometric'
       })
-      console.log(recoveryResponse)
+
       setSafeId(recoveryResponse.data.data.safeAddress)
-
-      let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
-
-      console.log(newOwner)
-      console.log(recoveryResponse.data.data.safeAddress)
-
-      defaultWallet[newOwner] = recoveryResponse.data.data.safeAddress;
-  
-      localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
 
       setCreating(false);
       navigate(RoutePath.wallet)

@@ -49,7 +49,7 @@ export function LoginScreen(props: any) {
   const [signingIn, setSigningIn] = useState(false);
   const [loginStatus, setLoginStatus] = useState(false);
 
-  const { setAccountDetails } = useRecoveryStore(
+  const { setAccountDetails, safeId } = useRecoveryStore(
     (state: any) => state
   );
 
@@ -96,10 +96,9 @@ export function LoginScreen(props: any) {
 
     setAccountDetails({provider: safeA?.getProvider() as SafeEventEmitterProvider, authResponse: response, safeAuth: safeA })
 
-      navigate(RoutePath.account)
-      }
+    navigate(safeId ? RoutePath.wallet : RoutePath.account)
 
-      // console.log(response)
+      }
 
     })()
   }, [])

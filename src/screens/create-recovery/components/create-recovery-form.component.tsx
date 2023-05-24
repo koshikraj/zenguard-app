@@ -106,17 +106,9 @@ export const CreateRecoveryForm = () => {
     
     setSafeId(predectedWalletAddress)
 
-    const eoa = accountDetails.authResponse.eoa;
-
-    let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
-
-    defaultWallet[eoa] = predectedWalletAddress
-
-    localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
-
     setCreating(false);
 
-    const safeSdk =  safeFactory.deploySafe({ safeAccountConfig, safeDeploymentConfig  })
+    const safeSdk = safeFactory.deploySafe({ safeAccountConfig, safeDeploymentConfig  })
 
     navigate(RoutePath.wallet)
   

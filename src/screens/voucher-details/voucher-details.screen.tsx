@@ -52,8 +52,18 @@ export const VoucherDetailsScreen = () => {
   const [ creating, setCreating ] = useState(false);
 
 
+
+
   useEffect(() => {
     ;(async () => {
+      const eoa = accountDetails.authResponse.eoa;
+
+      let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+  
+      defaultWallet[eoa] = safeId;
+  
+      localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
+      
       setLoadingActivities(true);
       const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider)
       setBalance(ethers.utils.formatEther(await safeOwner.getBalance(safeId)));   
@@ -61,6 +71,8 @@ export const VoucherDetailsScreen = () => {
       setNFTBalance((await NFTInstance.balanceOf(safeId)).toString());   
       setFetching(false);
       setLoadingActivities(false);
+
+    
 
     })()
   }, [creating])
