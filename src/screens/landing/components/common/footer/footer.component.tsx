@@ -16,7 +16,7 @@ export function FooterSection() {
         <ul>
           <SubTitle className="footer-heading">Developer Resources</SubTitle>
           <li>
-            <a href="https://github.com/koshikraj/zenguard-app" target="_next">
+            <a href="https://github.com/zenguardxyz" target="_next">
               GitHub
             </a>
           </li>

@@ -72,6 +72,7 @@ export const Steps = styled.div`
   }
 
   .step-img-box {
+
     display: flex;
     align-items: center;
     justify-content: center;

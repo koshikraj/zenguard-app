@@ -88,7 +88,7 @@ export function HeroSection({}) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />{" "} */}
-            <Button onClick={ ()=>navigate(RoutePath.login)}>Get started now</Button>
+            <Button onClick={ ()=>navigate(RoutePath.login)}>Try Demo</Button>
             <Modal
               size={isMobile ? "350px" : "600px"}
               padding="40px"

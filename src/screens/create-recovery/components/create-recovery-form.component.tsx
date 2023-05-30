@@ -72,6 +72,22 @@ export const CreateRecoveryForm = () => {
   const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
   const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
+
+
+
+  useEffect(() => {
+
+    ;(async () => {
+
+      // Create a wallet if no safes found 
+      if(!accountDetails.authResponse.safes.length)
+      await createSafe();    
+  })()
+
+
+
+   
+  }, [])
   
   
   const createSafe = async () => {

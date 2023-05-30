@@ -8,7 +8,8 @@ import {
 	Faq,
 	FooterSection,
 	TeamsSection,
-	BuiltOnSection,
+	BackedBy,
+	PoweredBy
 } from './components';
 import { LandingPageContainer } from './landing.screen.styles';
 
@@ -19,8 +20,9 @@ export function LandingScreen() {
 				<NavBar />
 				<HeroSection />
 				<HowItWorksSection />
-				<BuiltOnSection />
+				<PoweredBy />
 				<JoinCommunitySection />
+				<BackedBy />
 				{/* <Faq /> */}
 				<FooterSection />
 			</Container>

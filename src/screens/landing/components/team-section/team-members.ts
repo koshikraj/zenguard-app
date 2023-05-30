@@ -48,30 +48,6 @@ export const members = [
     },
   },
   {
-    name: 'Pavan Soratur',
-    designation: 'Web3 Developer',
-    profileAvatar: require('../../assets/team/pavan.jpeg'),
-    description:
-			'Web3 enthusiast skilled in Frontend web development and DApp development. Loves to always grasp valuable insights related to Science, Technology and Philosophy.',
-    socialLinks: {
-      twitter: 'https://twitter.com/pavansoratur',
-      linkedIn: 'https://www.linkedin.com/in/pavansoratur/',
-      gitHub: 'https://github.com/devpavan04',
-    },
-  },
-  {
-    name: 'Edison ',
-    designation: 'UI Engineer',
-    profileAvatar: require('../../assets/team/edison.jpeg'),
-    description:
-			'UI Developer who ensures the pixel perfect Implementation and Scalable Design Patterns.',
-    socialLinks: {
-      twitter: '',
-      linkedIn: 'https://www.linkedin.com/in/dsouzaedison/',
-      gitHub: '',
-    },
-  },
-  {
     name: 'Pranav Maheshwari',
     designation: 'Advisor',
     profileAvatar: require('../../assets/team/pranav.jpeg'),

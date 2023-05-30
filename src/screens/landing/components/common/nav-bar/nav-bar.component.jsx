@@ -55,7 +55,18 @@ export function NavBar() {
         <div className="menu-icon" onClick={handleClick}>
           <i className={active ? "fas fa-times" : "fas fa-bars"} />
         </div>
-        <Group className={classes.container}>
+       
+        <Group className={active ? "nav-menu active" : "nav-menu"}>
+           {/* <li> */}
+           <ul >
+          <li>
+            <NavLink to="/teams" className="styled-link">
+              About Us
+            </NavLink>
+          </li>
+ 
+        </ul>
+          {/* </li> */}
             <ActionIcon
               className={classes.buttonContainer}
               // variant="filled"
@@ -73,7 +84,7 @@ export function NavBar() {
               className={classes.buttonContainer}
               // variant="filled"
               component="a"
-              href="https://github.com/koshikraj/zenguard-app"
+              href="https://github.com/zenguardxyz"
               title="github"
               target="_blank"
             >

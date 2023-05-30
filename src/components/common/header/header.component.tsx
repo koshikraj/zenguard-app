@@ -162,7 +162,7 @@ export const Head = (props) => {
               className={classes.buttonContainer}
               // variant="filled"
               component="a"
-              href="https://github.com/koshikraj/zenguard-app"
+              href="https://github.com/zenguardxyz"
               title="github"
               target="_blank"
             >

@@ -5,6 +5,7 @@ import { HowItWorksContainer, Steps } from "./how.component.styles";
 import Step1 from "../../assets/images/step-1.png";
 import Step2 from "../../assets/images/step-2.png";
 import Step3 from "../../assets/images/step-3.png";
+import Feature1 from "../../assets/images/feature1.png";
 import YoutubeEmbed from "../video/youtube";
 
 export function HowItWorksSection() {
@@ -29,7 +30,7 @@ export function HowItWorksSection() {
           </p>
         </div>
         <div class="step-img-box">
-          <Image src={Step1} alt="sss" class="step-img" />
+          <Image src={Feature1} alt="sss" class="step-img" />
         </div>
       </Steps>
 

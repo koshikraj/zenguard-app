@@ -6,4 +6,5 @@ export * from './team-section/team.component';
 export * from './common/nav-bar/nav-bar.component';
 export * from './common/footer/footer.component';
 export * from './common/container/container.component';
-export * from './built-on/built.component';
+export * from './backedby-section/backed-by.component';
+export * from './powered-by/powered-by.component';

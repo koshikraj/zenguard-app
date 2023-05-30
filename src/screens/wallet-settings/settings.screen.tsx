@@ -589,7 +589,7 @@ const options: MetaTransactionOptions = {
 
         <Button
             loading={creating}
-            disabled={!walletBeneficiary || !registrationSuccess }
+            disabled={recoveryType == 'biometric' && (!walletBeneficiary || !registrationSuccess) || recoveryType == 'email' && !walletBeneficiary  }
             onClick={() => {
               createRecovery();
             }}
