@@ -1,41 +1,24 @@
 import styled from "styled-components";
 
-export const HowItWorksContainer = styled.section`
-  .sub-heading {
-    margin-top: 1rem;
-    padding: 2rem;
-  }
-  .steps {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    align-items: center;
-    justify-content: space-between;
-    margin: 8rem 2rem 0rem 2rem;
-  }
-
-  @media (max-width: 768px) {
-    margin-top: 6rem;
-    .steps {
-      flex-direction: column;
-      margin-top: 4rem;
-    }
-  }
-  /* mobile-device */
-  @media (max-width: 576px) {
-    padding: 2rem;
+export const FeaturesContainer = styled.div`
+  margin: 10rem 0;
+  h2 {
     text-align: center;
-    .sub-heading {
-      margin-top: 1.2rem;
+    font-size: 36px;
+  }
+  @media (max-width: 576px) {
+    h2 {
+      text-align: center;
+      font-size: 2.2rem;
     }
-    .steps {
-      flex-direction: column;
-      margin-top: 4rem;
+    p {
+      font-size: 1.8rem;
     }
   }
 `;
 
 export const Steps = styled.div`
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
@@ -117,6 +100,13 @@ export const Steps = styled.div`
     }
     .step-text-box {
       order: 1;
+      align-self: center;
+      display: flex;
+      gap: 2rem;
+      padding: 4rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     }
   }
   /* mobile-device */
@@ -126,6 +116,7 @@ export const Steps = styled.div`
 `;
 
 export const IconContainer = styled.div`
+  box-shadow: 0 0 25px #61FF47;
   background: #293964;
   align-items: center;
   display: inline-flex;
@@ -142,19 +133,21 @@ export const IconsContainer = styled.div`
 `;
 
 export const FeatureCard = styled.div`
+  
   background: #20283D;
   justify-content: center;
   display: flex;
   flex-direction: column;
   padding: 3rem 3rem 2rem 3rem;
   // flex: 0 0 30rem;
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 200 px;
   transition: box-shadow 0.3s;
   border-radius: 3rem;
+  // box-shadow: 0 0 11px #61FF47;
   &:hover {
     cursor: pointer;
-    box-shadow: 0 0 11px #44BCF0;
+    box-shadow: 0 0 11px #61FF47;
 
     border-image-source: linear-gradient(
       89.58deg,
@@ -179,10 +172,12 @@ export const CardsContainer = styled.div`
     margin-top: 2rem;
     // color: #9ba9b4;
     color: #fff;
-    font-size: 1.8rem;
+    font-size: 1.7rem;
+    font-weight: 500;
     display: flex;
     justify-content: center;
     text-align: center;
+    line-height: 1.5;
   }
 
   p {

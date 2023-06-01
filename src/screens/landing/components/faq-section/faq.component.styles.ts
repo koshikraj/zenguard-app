@@ -34,12 +34,7 @@ export const QuestionsContainer = styled.div`
 	border-bottom: ${(isActive) => (isActive ? 'none' : '1px solid #9ba9b4')};
 	.title {
 		font-size: 2rem;
-		background: linear-gradient(
-			89.58deg,
-			#44bcf0 -19.85%,
-			#818cf8 54.07%,
-			#a099ff 120.75%
-		);
+		background: linear-gradient(132.56deg, #61FF47 -20.89%, #89B8FF 99.53%, #FF70F1 123.47%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;

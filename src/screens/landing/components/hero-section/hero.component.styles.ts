@@ -74,11 +74,17 @@ export const HeroSectionContainer = styled.section`
   .hero-image {
     align-items: flex-end;
     img {
-      width: 70%;
+      width: 80%;
     }
   }
   @media (max-width: 768px) {
     margin-bottom: 0rem;
+    .hero-image {
+      visibility: hidden;
+      align-items: flex-end;
+      img {
+        width: 80%;
+      }
     .hero {
       padding: 4rem;
       grid-template-columns: 1fr;

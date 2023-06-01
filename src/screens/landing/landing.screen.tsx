@@ -5,11 +5,14 @@ import {
 	HeroSection,
 	HowItWorksSection,
 	JoinCommunitySection,
+	BuiltFor,
 	Faq,
 	FooterSection,
 	TeamsSection,
 	BackedBy,
-	PoweredBy
+	PoweredBy,
+	SupportedChains,
+	Features
 } from './components';
 import { LandingPageContainer } from './landing.screen.styles';
 
@@ -19,11 +22,14 @@ export function LandingScreen() {
 			<Container>
 				<NavBar />
 				<HeroSection />
+				<SupportedChains />
+				<Features />
 				<HowItWorksSection />
+				<BuiltFor />
 				<PoweredBy />
 				<JoinCommunitySection />
 				<BackedBy />
-				{/* <Faq /> */}
+				<Faq />
 				<FooterSection />
 			</Container>
 		</LandingPageContainer>

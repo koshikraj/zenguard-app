@@ -44,32 +44,20 @@ export function Faq() {
       <Title centered className="faq-title">
         Frequently asked Questions
       </Title>
-      <Item title="Who should use Safient voucher?">
-        Are you looking to gift crypto assets to someone? Do you want to send
-        crypto to someone but don't have their wallet address?
-        {' '}
-        <br />
-        We got you covered 🤗. Safient Voucher can do it with ease and safety.
+      <Item title="What is ZenGuard?">
+        ZenGuard is a plug and play smart contract wallet solution for DApps and existing wallet providers.
       </Item>
-      <Item title="How is it different than other Crypto voucher services?">
-        Many available crypto vouchers are custodial. Safient voucher is a
-        non-custodial voucher without going through any intermediary before
-        someone redeems it.
+      <Item title="How is ZenGuard different?">
+        ZenGuard makes the wallet onboarding seamless with existing social logins, email, phone etc and providing the secure recovery solutions with inheritance features.
       </Item>
-      <Item title="Does the voucher have expiry date?">
-        Yes, but it's entirely up to the voucher creator to set all the
-        restrictions of voucher redemption. We provide plenty of options to
-        choose from.
+      <Item title="Who can use ZenGuard?">
+        ZenGuard wallet solutions can be integrated with existing DApp with our SDKs. Existing Safe users can also leverage recovery and inheritance features.
       </Item>
-      <Item title="What happens after I redeem the voucher?">
-        The voucher redemption gives access to the crypto and they can spend
-        however they wish. But for better management, we will also provide
-        several integrations to other services.
+      <Item title="What else does ZenGuard provide?">
+        ZenGuard uses extensible smart contract wallet solution of Safe. So, any additional programmable feautures can be added to the wallet such as session keys, granular access control etc.
       </Item>
-      <Item title="Why is there an early access program?">
-        Although we want everyone to access it soon, we want to make sure we
-        give out the best version to everyone by inviting a few people to access
-        it first.
+      <Item title="Does ZenGuard use Account Abstraction?">
+         Yes, ZenGuard leverages Account Abstraction for smart contract wallet to provide seamless account creation, gas sponsorship, recovery features and much more.
       </Item>
     </ItemsContainer>
   );

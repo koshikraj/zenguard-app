@@ -8,3 +8,6 @@ export * from './common/footer/footer.component';
 export * from './common/container/container.component';
 export * from './backedby-section/backed-by.component';
 export * from './powered-by/powered-by.component';
+export * from './supported-chains/supported-chains.component';
+export * from './features-section/features.component';
+export * from './built-for-section/built-for.component';

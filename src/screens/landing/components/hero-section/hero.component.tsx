@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { HeroSectionContainer, useStyles } from "./hero.component.styles";
-import HeroImage from "../../assets/images/zen-safe.svg";
+import HeroImage from "../../assets/images/zen-hero.png";
 import { StyledSpan } from "../common/span/span.component";
 import { Button } from "../common/button/button.component";
 import { WaitListForm } from "./mailchimp";
@@ -79,7 +79,7 @@ export function HeroSection({}) {
             <StyledSpan> never  </StyledSpan>{" "}  lose
           </h1>
           <p className="sub-heading">
-            Get your ZenGuard now🛡️
+          First ever  smart contract wallet SDK to provide  <br/>  wallet recovery using biometrics. <p> Powered by <StyledSpan> Safe </StyledSpan> , enabled by  <StyledSpan> Account Abstraction </StyledSpan> 🛡️ </p>
           </p>
           <div className="form-group">
             {/* <input
