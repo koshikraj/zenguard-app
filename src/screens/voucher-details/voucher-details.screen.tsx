@@ -9,6 +9,8 @@ import {
   Loader,
   Modal,
   Skeleton,
+  UnstyledButton,
+  Chip,
 } from "@mantine/core";
 import {
   BackButton,
@@ -20,7 +22,9 @@ import {
 } from "../../components";
 import sampleNFT from "../../artifacts/SampleNFT.json";
 //@ts-ignore
-import ZenGuard from "../../assets/icons/zenguard.svg";
+import Transaction from "../../assets/icons/transaction.svg";
+//@ts-ignore
+import SafeIcon from "../../assets/icons/safe.png";
 import { IconCopy, IconBell, IconSettings, IconPlus } from "@tabler/icons";
 import { useStyles } from "./voucher-details.screen.styles";
 import useRecoveryStore from "store/recovery/recovery.store";
@@ -35,6 +39,9 @@ import { Contract, ethers } from "ethers";
 import { MetaTransactionOptions, SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 import Safe, { EthersAdapter, getSafeContract } from "@safe-global/protocol-kit";
 import { GelatoRelayPack } from "@safe-global/relay-kit";
+import { useClipboard } from "@mantine/hooks";
+import { AddressUtil } from "utils/address";
+import { TimeUtil } from "utils/time";
 
 
 const GELATO_RELAY_API_KEY = process.env.REACT_APP_GELATO_RELAY_API_KEY
@@ -44,23 +51,26 @@ export const VoucherDetailsScreen = () => {
   const { classes } = useStyles();
 
   const navigate = useNavigate();
-  const { accountDetails, safeId } = useRecoveryStore((state: any) => state);
+  const { accountDetails, safeId, safeStatus } = useRecoveryStore((state: any) => state);
   const [ fetching, setFetching ] =  useState(true);
   const [ balance, setBalance ] = useState('0');
   const [ nftBalance, setNFTBalance ] = useState('0');
   const [ loadingActivities, setLoadingActivities ] = useState(false);
   const [ creating, setCreating ] = useState(false);
 
+  const clipboard = useClipboard({ timeout: 500 });
+
 
 
 
   useEffect(() => {
     ;(async () => {
+      console.log(safeStatus)
       const eoa = accountDetails.authResponse.eoa;
 
       let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
   
-      defaultWallet[eoa] = safeId;
+      defaultWallet[eoa] = { address: safeId, deployed: safeStatus };
   
       localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
       
@@ -75,12 +85,7 @@ export const VoucherDetailsScreen = () => {
     
 
     })()
-  }, [creating])
-
-
-  function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  }, [creating, safeStatus])
 
 
   const mintNFT = async () => {
@@ -94,12 +99,20 @@ export const VoucherDetailsScreen = () => {
       
     
     setCreating(true);
+
+    while(!JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa].deployed) {
+      await TimeUtil.sleep(1000);
+    }
+
+
     const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider).getSigner(0)
     const ethAdapter = new EthersAdapter({
       ethers,
       signerOrProvider:safeOwner
     })
 
+
+ 
     
 
     const safeSdk: Safe = await Safe.create({ ethAdapter, safeAddress: safeId })
@@ -150,7 +163,7 @@ export const VoucherDetailsScreen = () => {
 
     let taskStatus = null;
     do {
-    await sleep(2000)
+    await TimeUtil.sleep(2000)
     console.log('waiting')
     try {
     taskStatus = await relayKit.getTaskStatus(response.taskId)
@@ -208,7 +221,7 @@ export const VoucherDetailsScreen = () => {
               <Loader />
               
               <Text mt={"lg"} align='center'> Minting a new NFT
-              <Box sx={{ paddingTop: "20px" }}><Center><Image src={ZenGuard} width={50}/></Center> </Box>
+              <Box sx={{ paddingTop: "20px" }}><Center><Image src={Transaction} width={50}/></Center> </Box>
               </Text>
               
             </Container>
@@ -258,20 +271,36 @@ export const VoucherDetailsScreen = () => {
               <Stack>
                 <Center mt={20}>
                   <Group>
-                    <Text
-                      sx={
-                        {
-                          // filter: "blur(8px)"
-                        }
-                      }
+                   { safeStatus &&  <>
+                  <Image src={SafeIcon} width={15} /> 
+                  <Chip checked color="green" variant="light" size="xs" radius="md">Deployed</Chip>
+                  </>
+                  }
+                  
+                    <UnstyledButton
+                    
+                   
                       onClick={()=> window.open(
                         `https://goerli.basescan.org/address/${safeId}`,
                         "_blank"
                       )}
+                    
+                       
+                
                     >
-                      { safeId }
-                    </Text>
-                    <IconCopy />
+                     { AddressUtil.shorternAddress(safeId) }
+                      </UnstyledButton>
+                      <UnstyledButton>
+                      <IconCopy
+                      
+                color={clipboard.copied ? "green" : "grey"}
+                onClick={() =>
+                  clipboard.copy(safeId)
+                }
+              >
+                {clipboard.copied ? "Copied" : "Copy"}
+              </IconCopy>   
+              </UnstyledButton>
                   </Group>
                 </Center>
 

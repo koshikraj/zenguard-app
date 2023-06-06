@@ -22,9 +22,8 @@ export const Account = () => {
 
 
         let walletStore: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
-        console.log(walletStore[accountDetails.authResponse.eoa])
-        console.log(accountDetails.authResponse.safes)
-        if(!(accountDetails.authResponse.safes.includes(walletStore[accountDetails.authResponse.eoa]))) {
+
+        if(!(accountDetails.authResponse.safes.includes(walletStore[accountDetails.authResponse.eoa]?.address))) {
             walletStore[accountDetails.authResponse.eoa] = '';
         }
 
@@ -47,12 +46,13 @@ export const Account = () => {
         if(walletStore && !walletStore[accountDetails.authResponse.eoa]) {
 
             const eoa = accountDetails.authResponse.eoa;
-            walletStore[eoa] = accountDetails.authResponse.safes[0]
+            walletStore[eoa] = { address: accountDetails.authResponse.safes[0] }
             localStorage.setItem("defaultWallet", JSON.stringify(walletStore))
             
         }
         
-        setSafeId(JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa])
+        console.log(JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa])
+        setSafeId(JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa].address)
 
 
         navigate(RoutePath.wallet)

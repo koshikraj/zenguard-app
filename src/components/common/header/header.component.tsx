@@ -113,7 +113,7 @@ export const Head = (props) => {
   const navigate = useNavigate();
 
   return (
-    <Header  height={{ base: 50, md: 70 }} p="md">
+    <Header  height={{ base: 70, md: 70 }} p="md">
       {/* <div className={classes.wrapper} style={{ display: 'flex', alignItems: 'center', height: '100%' }}> */}
   
 

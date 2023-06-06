@@ -43,10 +43,11 @@ import SafeIcon from "../../assets/icons/safe.png";
 
 import recoveryModule from "../../artifacts/SocialRecoveryModule.json";
 //@ts-ignore
-import ZenGuard from "../../assets/icons/zenguard.svg";
+import ZenGuard from "../../assets/icons/recovery.svg";
 import { IconCheck } from "@tabler/icons";
 import { client, server } from "@passwordless-id/webauthn";
 import { register } from "@passwordless-id/webauthn/dist/esm/client";
+import { TimeUtil } from "utils/time";
 
 
 const oauthGuardian = '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA';
@@ -137,7 +138,9 @@ setWebAuthnData(registration);
 
     const recoveryEmailHash = crypto.createHash('sha256').update(walletBeneficiary).digest('hex');
 
-    console.log(recoveryEmailHash)
+    while(!JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa].deployed) {
+      await TimeUtil.sleep(1000);
+    }
 
     try {
     const recoveryResponse = await axios.post(`${recoveryAPI}/recovery`, {
@@ -361,7 +364,7 @@ const options: MetaTransactionOptions = {
               <Loader />
               
               <Text mt={"lg"} align='center'> Enabling recovery on your wallet
-              <Box sx={{ paddingTop: "20px" }}><Center><Image src={ZenGuard} width={50}/></Center> </Box>
+              <Box sx={{ paddingTop: "20px" }}><Center><Image src={ZenGuard} width={150}/></Center> </Box>
               </Text>
               
             </Container>

@@ -31,7 +31,7 @@ import {  } from "services";
 //@ts-ignore
 import Flask from "../../../assets/icons/flask.svg";
 //@ts-ignore
-import Safe from "../../../assets/icons/safe.png";
+import Safe from "../../../assets/icons/safe-zen.svg";
 import { ethers } from "ethers";
 import EthersAdapter from "@safe-global/safe-ethers-lib";
 import { PredictSafeProps, SafeAccountConfig, SafeDeploymentConfig, SafeFactory } from "@safe-global/safe-core-sdk";
@@ -64,7 +64,7 @@ export const CreateRecoveryForm = () => {
 
   const [advancedOptions, setAdvancedOptions] = useState(false);
 
-  const { setCreateStep, setFormData, accountDetails, setSafeId } = useRecoveryStore(
+  const { setCreateStep, setFormData, accountDetails, setSafeId, setSafeStatus } = useRecoveryStore(
     (state: any) => state
   );
 
@@ -93,6 +93,8 @@ export const CreateRecoveryForm = () => {
   const createSafe = async () => {
   
     setCreating(true);
+    setSafeStatus(false);
+    
     const provider = new ethers.providers.JsonRpcProvider(RPC_URL)
     const safeDeployer = new ethers.Wallet(process.env.REACT_APP_GUARDIAN_WALLET_KEY!, provider)
     const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider).getSigner(0)
@@ -125,6 +127,18 @@ export const CreateRecoveryForm = () => {
     setCreating(false);
 
     const safeSdk = safeFactory.deploySafe({ safeAccountConfig, safeDeploymentConfig  })
+
+    safeSdk.then((response)=> { 
+      
+      const eoa = accountDetails.authResponse.eoa;
+
+      let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+  
+      defaultWallet[eoa] = { address: predectedWalletAddress, deployed: true };
+  
+      localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
+      
+      setSafeStatus(true); })
 
     navigate(RoutePath.wallet)
   
@@ -165,7 +179,7 @@ export const CreateRecoveryForm = () => {
               <Loader />
               
               <Text mt={"lg"} align='center'>{progressMessage[progressStage].text}
-              <Box sx={{ paddingTop: "20px" }}><Center><Image src={progressMessage[progressStage].image} width={30}/></Center> </Box>
+              <Box sx={{ paddingTop: "20px" }}><Center><Image src={progressMessage[progressStage].image} width={150}/></Center> </Box>
               </Text>
               
             </Container>

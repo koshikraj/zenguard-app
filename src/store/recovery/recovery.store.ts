@@ -7,6 +7,7 @@ const useRecoveryStore = create((set) => ({
   accountDetails: {},
   authDetails: {},
   safeId: '',
+  safeStatus: true,
   recoveryType: '',
 
   setRoleName: (name: string) => {
@@ -20,6 +21,13 @@ const useRecoveryStore = create((set) => ({
     set((state: any) => ({
       ...state,
       safeId: id,
+    }));
+  },
+
+  setSafeStatus: (status: boolean) => {
+    set((state: any) => ({
+      ...state,
+      safeStatus: status,
     }));
   },
 
