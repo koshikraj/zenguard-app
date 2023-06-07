@@ -78,7 +78,7 @@ export function LoginScreen(props: any) {
         txServiceUrl: txServiceUrl, // Optional. Only if want to retrieve related safes
         authProviderConfig: {
           rpcTarget: RPC_URL,
-          clientId: 'BAcCop_qaWVfw15peOnVq8xd8KefD3UvZ-3bKip0RNy0w1J0Z8ZKNNzWiFW97a66S-UGr-oZpzdk1hE8SwWmy00',
+          clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
           network: 'testnet',
           theme: 'dark'
         }
