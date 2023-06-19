@@ -26,6 +26,7 @@ export const Navigation = () => {
     <Routes>
       <Route path={RoutePath.login} element={<LoginScreen />} />
       <Route path={RoutePath.recovery} element={<VouchersScreen />} />
+      <Route path={RoutePath.account} element={<Account />} />
       <Route path={RoutePath.walletRecovery} element={<WalletRecoveryScreen />} />
 
       <Route path={RoutePath.notFound} element={<NotFound />} />
@@ -36,7 +37,7 @@ export const Navigation = () => {
       />
 
       <Route element={<RequireAuth />}>
-      <Route path={RoutePath.account} element={<Account />} />
+      
       <Route path={RoutePath.wallet} element={<VoucherDetailsScreen />} />
       <Route path={RoutePath.transactionGuard} element={<TransactionGuards />} />
       <Route path={RoutePath.nftDApp} element={<NFTDetailsScreen />} />

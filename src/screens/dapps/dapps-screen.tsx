@@ -12,8 +12,6 @@ import useRecoveryStore from "store/recovery/recovery.store";
 import { Wallet } from "utils";
 
 
-const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-
 export const DAppsScreen = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();

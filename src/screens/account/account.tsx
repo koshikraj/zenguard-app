@@ -2,12 +2,62 @@ import { useEffect } from "react";
 import useRecoveryStore from "../../store/recovery/recovery.store";
 import { useNavigate } from "react-router-dom";
 import { RoutePath } from "navigation/route-path";
+import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
+import { NetworkUtil } from "utils/networks";
+import { VoucherDetailsShimmer } from "screens/voucher-details/voucher-details.shimmer";
 
 export const Account = () => {
   
 
-    const { accountDetails, setSafeId, setAuthDetails } = useRecoveryStore((state: any) => state);
+    const { accountDetails, setSafeId, setAuthDetails, setAccountDetails, chainId, safeId } = useRecoveryStore((state: any) => state);
 
+
+    
+
+    const navigate = useNavigate();
+
+
+    const updateWalletStore =  (authResponse: any) => { 
+
+
+        let walletStore: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+
+       try { 
+        if(!(authResponse.safes.includes(walletStore[authResponse.eoa][chainId]?.address))) {
+            walletStore[authResponse.eoa][chainId] = '';
+        }
+       }
+       catch (e) {
+            
+        walletStore[authResponse.eoa] = {};
+        walletStore[authResponse.eoa][chainId] = ''; 
+    }
+
+        return walletStore;
+
+    }
+
+    const authenticateUser = async (signin=false ) => {
+
+        const safeAuth =  await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
+              
+          chainId: '0x' + NetworkUtil.getNetworkById(chainId)?.chainId.toString(16),
+          txServiceUrl:  NetworkUtil.getNetworkById(chainId)?.safeService, // Optional. Only if want to retrieve related safes
+          authProviderConfig: {
+            rpcTarget: NetworkUtil.getNetworkById(chainId)!.url,
+            clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
+            network: 'testnet',
+            theme: 'dark'
+          }
+        })
+    
+        const response = signin ? await safeAuth?.signIn() : null;
+    
+        return { response: response, auth: safeAuth}
+      }
+    
+
+    useEffect(() => {
 
     var authStore = localStorage.getItem("openlogin_store");
     if (authStore) { 
@@ -15,44 +65,28 @@ export const Account = () => {
 
     }
 
-    const navigate = useNavigate();
-
-
-    const updateWalletStore =  () => { 
-
-
-        let walletStore: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
-
-        if(!(accountDetails.authResponse.safes.includes(walletStore[accountDetails.authResponse.eoa]?.address))) {
-            walletStore[accountDetails.authResponse.eoa] = '';
-        }
-
-        return walletStore;
-
-    }
-    
-
-    useEffect(() => {
-
     ;(async () => {
 
-    let walletStore: any =   updateWalletStore();
-    console.log(walletStore)
+    const safeAuth = await authenticateUser(true);
+    setAccountDetails({provider: safeAuth.auth?.getProvider(), authResponse: safeAuth.response, safeAuth: safeAuth.auth })    
 
-    console.log(accountDetails.authResponse.safes)
+    let walletStore: any =   updateWalletStore(safeAuth.response);
+    localStorage.setItem("defaultWallet", JSON.stringify(walletStore))
 
-    if (accountDetails.authResponse.safes.length) { 
+    if (safeAuth.response?.safes?.length) { 
         
-        if(walletStore && !walletStore[accountDetails.authResponse.eoa]) {
+        if(walletStore && !walletStore[safeAuth.response.eoa][chainId]) {
 
-            const eoa = accountDetails.authResponse.eoa;
-            walletStore[eoa] = { address: accountDetails.authResponse.safes[0] }
-            localStorage.setItem("defaultWallet", JSON.stringify(walletStore))
+            const eoa = safeAuth.response.eoa;
+            walletStore[eoa][chainId] = { address: safeAuth.response.safes[0], deployed: true }
+            
             
         }
+        localStorage.setItem("defaultWallet", JSON.stringify(walletStore))
         
-        console.log(JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa])
-        setSafeId(JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa].address)
+        if(!safeId) {
+            setSafeId(JSON.parse(localStorage.getItem("defaultWallet")!)[safeAuth.response.eoa][chainId].address)
+        }
 
 
         navigate(RoutePath.wallet)
@@ -70,6 +104,6 @@ export const Account = () => {
    
   }, [])
 
-  return (<> </>)
+  return (<VoucherDetailsShimmer />)
     
 };

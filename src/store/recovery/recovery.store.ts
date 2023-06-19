@@ -7,6 +7,7 @@ const useRecoveryStore = create((set) => ({
   accountDetails: {},
   authDetails: {},
   safeId: '',
+  chainId:  localStorage.getItem("chainId") ? parseInt(localStorage.getItem("chainId")!) : 84531,
   safeStatus: true,
   recoveryType: '',
 
@@ -21,6 +22,13 @@ const useRecoveryStore = create((set) => ({
     set((state: any) => ({
       ...state,
       safeId: id,
+    }));
+  },
+
+  setChainId: (id: number) => {
+    set((state: any) => ({
+      ...state,
+      chainId: id,
     }));
   },
 

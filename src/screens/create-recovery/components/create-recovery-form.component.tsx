@@ -29,8 +29,6 @@ import dayjs from "dayjs";
 import {  } from "services";
 
 //@ts-ignore
-import Flask from "../../../assets/icons/flask.svg";
-//@ts-ignore
 import Safe from "../../../assets/icons/safe-zen.svg";
 import { ethers } from "ethers";
 import EthersAdapter from "@safe-global/safe-ethers-lib";
@@ -39,6 +37,7 @@ import SafeServiceClient from "@safe-global/safe-service-client";
 import { Contract } from "ethers";
 import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 import { RoutePath } from "navigation";
+import { NetworkUtil } from "utils/networks";
 
 
 const progressMessage = [{text: "Setting up a new wallet. Powered by Safe ⛓🔒", image: Safe}, {text: "Setting up a new wallet. Powered by Safe ⛓🔒", image: Safe}]
@@ -64,17 +63,11 @@ export const CreateRecoveryForm = () => {
 
   const [advancedOptions, setAdvancedOptions] = useState(false);
 
-  const { setCreateStep, setFormData, accountDetails, setSafeId, setSafeStatus } = useRecoveryStore(
+  const { setCreateStep, chainId, accountDetails, setSafeId, setSafeStatus } = useRecoveryStore(
     (state: any) => state
   );
 
-
-  const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
-
-  const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-
-
-
+  
   useEffect(() => {
 
     ;(async () => {
@@ -83,9 +76,6 @@ export const CreateRecoveryForm = () => {
       if(!accountDetails.authResponse.safes.length)
       await createSafe();    
   })()
-
-
-
    
   }, [])
   
@@ -95,18 +85,12 @@ export const CreateRecoveryForm = () => {
     setCreating(true);
     setSafeStatus(false);
     
-    const provider = new ethers.providers.JsonRpcProvider(RPC_URL)
+    const provider = new ethers.providers.JsonRpcProvider(NetworkUtil.getNetworkById(chainId)!.url)
     const safeDeployer = new ethers.Wallet(process.env.REACT_APP_GUARDIAN_WALLET_KEY!, provider)
-    const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider).getSigner(0)
     const ethAdapter = new EthersAdapter({
       ethers,
       signerOrProvider:safeDeployer
     })
-
-    
-    // const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
-
-    // console.log(await safeService.getSafesByOwner(accountDetails.authResponse.eoa))
 
     const safeFactory = await SafeFactory.create({ ethAdapter })
     const saltNonce = (new Date().getTime() / 1000).toFixed();
@@ -127,14 +111,14 @@ export const CreateRecoveryForm = () => {
     setCreating(false);
 
     const safeSdk = safeFactory.deploySafe({ safeAccountConfig, safeDeploymentConfig  })
+    const eoa = accountDetails.authResponse.eoa;  
+    let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+    defaultWallet[eoa][chainId] = { address: predectedWalletAddress, deployed: false };
+    localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
 
     safeSdk.then((response)=> { 
       
-      const eoa = accountDetails.authResponse.eoa;
-
-      let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
-  
-      defaultWallet[eoa] = { address: predectedWalletAddress, deployed: true };
+      defaultWallet[eoa][chainId] = { address: predectedWalletAddress, deployed: true };
   
       localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
       

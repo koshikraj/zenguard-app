@@ -40,14 +40,12 @@ import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 import { RoutePath } from "navigation";
 import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
 import axios from "axios";
+import { NetworkUtil } from "utils/networks";
 
 
 
 const progressMessage = [{text: "Recovering the wallet", image: Zenguard}, {text: "Recovering the wallet", image: Zenguard}]
 
-
-const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
 export const UserAuth = () => {
   const { classes } = useStyles();
@@ -76,7 +74,7 @@ export const UserAuth = () => {
   );
 
 
-  const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
+  const chainId = 5
   const recoveryAPI = process.env.REACT_APP_RECOVERY_API;
   
   
@@ -88,8 +86,8 @@ export const UserAuth = () => {
       web3AuthNetwork: 'testnet',
       chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
-        chainId: "0x14A33",
-        rpcTarget: RPC_URL,
+        chainId: '0x' + NetworkUtil.getNetworkById(chainId)?.chainId.toString(16),
+        rpcTarget: NetworkUtil.getNetworkById(chainId)?.url,
       },
       uiConfig: {
         theme: 'dark',
@@ -104,7 +102,6 @@ export const UserAuth = () => {
     const safeBeneficiary = new ethers.providers.Web3Provider(web3auth.provider as ethers.providers.ExternalProvider).getSigner(0)
 
     const userInfo = await web3auth.getUserInfo()
-    console.log(userInfo)
 
     setRecoveryEmailHash(crypto.createHash('sha256').update(userInfo.email!).digest('hex'));
     setIdToken(userInfo.idToken!)

@@ -25,6 +25,14 @@ import sampleNFT from "../../artifacts/SampleNFT.json";
 import Transaction from "../../assets/icons/transaction.svg";
 //@ts-ignore
 import SafeIcon from "../../assets/icons/safe.png";
+//@ts-ignore
+import Base from "../../assets/icons/base.png";
+//@ts-ignore
+import ETH from "../../assets/icons/eth.svg";
+//@ts-ignore
+import Gnosis from "../../assets/icons/gno.svg";
+//@ts-ignore
+import Polygon from "../../assets/icons/matic.svg";
 import { IconCopy, IconBell, IconSettings, IconPlus } from "@tabler/icons";
 import { useStyles } from "./voucher-details.screen.styles";
 import useRecoveryStore from "store/recovery/recovery.store";
@@ -41,17 +49,20 @@ import Safe, { EthersAdapter, getSafeContract } from "@safe-global/protocol-kit"
 import { GelatoRelayPack } from "@safe-global/relay-kit";
 import { useClipboard } from "@mantine/hooks";
 import { AddressUtil } from "utils/address";
+import NFTDetails  from "utils/artifacts/nft.json";
 import { TimeUtil } from "utils/time";
+import { NetworkUtil } from "utils/networks";
+import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
 
 
-const GELATO_RELAY_API_KEY = process.env.REACT_APP_GELATO_RELAY_API_KEY
-const nftContract = '0xe0c306959922f4094a2AA6f1D88Ff8640D9e3e5e';
+let GELATO_RELAY_API_KEY = process.env.REACT_APP_GELATO_RELAY_API_KEY;
+let nftContract = '';
 
 export const VoucherDetailsScreen = () => {
   const { classes } = useStyles();
 
   const navigate = useNavigate();
-  const { accountDetails, safeId, safeStatus } = useRecoveryStore((state: any) => state);
+  const { accountDetails, safeId, safeStatus, chainId, setAccountDetails, setSafeId } = useRecoveryStore((state: any) => state);
   const [ fetching, setFetching ] =  useState(true);
   const [ balance, setBalance ] = useState('0');
   const [ nftBalance, setNFTBalance ] = useState('0');
@@ -61,18 +72,43 @@ export const VoucherDetailsScreen = () => {
   const clipboard = useClipboard({ timeout: 500 });
 
 
+  const authenticateUser = async (signin=false ) => {
 
+    const safeAuth =  await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
+          
+      chainId: '0x' + NetworkUtil.getNetworkById(chainId)?.chainId.toString(16),
+      txServiceUrl:  NetworkUtil.getNetworkById(chainId)?.safeService, // Optional. Only if want to retrieve related safes
+      authProviderConfig: {
+        rpcTarget: NetworkUtil.getNetworkById(chainId)!.url,
+        clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
+        network: 'testnet',
+        theme: 'dark'
+      }
+    })
+
+    const response = signin ? await safeAuth?.signIn() : null;
+
+    return { response: response, auth: safeAuth}
+  }
 
   useEffect(() => {
     ;(async () => {
-      console.log(safeStatus)
-      const eoa = accountDetails.authResponse.eoa;
 
-      let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
+      // const safeAuth = await authenticateUser(true);
+      // setAccountDetails({provider: safeAuth.auth?.getProvider(), authResponse: safeAuth.response, safeAuth: safeAuth.auth })
+      // setSafeId(JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa][chainId].address)
+      GELATO_RELAY_API_KEY = NetworkUtil.getNetworkById(chainId)?.type == 'Mainnet' ? process.env.REACT_APP_GELATO_RELAY_API_KEY_MAINNET : process.env.REACT_APP_GELATO_RELAY_API_KEY;
+
+
+      nftContract = JSON.parse(JSON.stringify(NFTDetails)).networkAddresses[chainId];
+      console.log(nftContract)
+      // const eoa = accountDetails.authResponse.eoa;
+
+      // let defaultWallet: any =  localStorage.getItem("defaultWallet") ? JSON.parse(localStorage.getItem("defaultWallet")!) : {};
   
-      defaultWallet[eoa] = { address: safeId, deployed: safeStatus };
+      // defaultWallet[eoa] = { address: safeId, deployed: safeStatus };
   
-      localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
+      // localStorage.setItem("defaultWallet", JSON.stringify(defaultWallet))
       
       setLoadingActivities(true);
       const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider)
@@ -100,7 +136,7 @@ export const VoucherDetailsScreen = () => {
     
     setCreating(true);
 
-    while(!JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa].deployed) {
+    while(!JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa][chainId].deployed) {
       await TimeUtil.sleep(1000);
     }
 
@@ -154,7 +190,7 @@ export const VoucherDetailsScreen = () => {
     const relayTransaction = {
       target: safeId,
       encodedTransaction: encodedTx,
-      chainId: 84531,
+      chainId: chainId,
       options
     }
 
@@ -242,12 +278,24 @@ export const VoucherDetailsScreen = () => {
                   <Title text="Wallet Name" />
                   <Box
                     sx={{
+                      display: "flex",
+                      alignItems: "center",
                       backgroundColor: "rgba(73, 179, 147, 0.1);",
                       padding: "4px 16px",
                       borderRadius: "4px",
                     }}
                   >
-                    <Text color={"green"}> Base Goerli Testnet</Text>
+                    <Image
+                    src={
+              { 100: Gnosis, 
+                84531: Base,
+                5: ETH
+              }[chainId as number]} width={28} /> 
+                    <Text  sx={{
+                      padding: "8px",
+
+                    }}
+                    color={"green"}> {NetworkUtil.getNetworkById(chainId)?.name } {NetworkUtil.getNetworkById(chainId)?.type }</Text>
                   </Box>
                   <Group>
                     <IconBell
@@ -281,7 +329,7 @@ export const VoucherDetailsScreen = () => {
                     
                    
                       onClick={()=> window.open(
-                        `https://goerli.basescan.org/address/${safeId}`,
+                        `${NetworkUtil.getNetworkById(chainId)?.blockExplorer}/address/${safeId}`,
                         "_blank"
                       )}
                     

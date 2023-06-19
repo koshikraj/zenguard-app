@@ -12,14 +12,6 @@ import { RoutePath } from "../../../../navigation/route-path";
 
 import { SafeEventEmitterProvider } from '@web3auth/base'
 import { SafeAuthKit, SafeAuthProviderType, SafeAuthSignInData } from '@safe-global/auth-kit'
-import SafeServiceClient from '@safe-global/safe-service-client'
-import EthersAdapter from '@safe-global/safe-ethers-lib'
-
-const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-
-
-const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
-
 
 export function HeroSection({}) {
 
@@ -36,38 +28,6 @@ export function HeroSection({}) {
 	  const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null)
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-		;(async () => {
-		  setSafeAuth(
-			await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
-			  
-			  chainId: "0x14A33",
-			  txServiceUrl: txServiceUrl, // Optional. Only if want to retrieve related safes
-			  authProviderConfig: {
-				rpcTarget: RPC_URL,
-				clientId: 'BAcCop_qaWVfw15peOnVq8xd8KefD3UvZ-3bKip0RNy0w1J0Z8ZKNNzWiFW97a66S-UGr-oZpzdk1hE8SwWmy00',
-				network: 'testnet',
-				theme: 'dark'
-			  }
-			})
-		  )
-		})()
-	  }, [])
-
-	  const handleLogin = async () => {
-		if (!safeAuth) return
-	
-	
-	
-		const response = await safeAuth.signIn()
-		console.log('SIGN IN RESPONSE: ', response)
-		// console.log(await safeService.getSafesByOwner('0xd5B5Ff46dEB4baA8a096DD0267C3b81Bda65e943'))
-	
-		console.log(response)
-		setSafeAuthSignInResponse(response)
-		setProvider(safeAuth.getProvider() as SafeEventEmitterProvider)
-	  }
 
 
   return (

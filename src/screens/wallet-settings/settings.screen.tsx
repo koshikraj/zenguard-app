@@ -39,6 +39,14 @@ import useRecoveryStore from "store/recovery/recovery.store";
 import crypto from 'crypto';
 //@ts-ignore
 import SafeIcon from "../../assets/icons/safe.png";
+//@ts-ignore
+import Base from "../../assets/icons/base.png";
+//@ts-ignore
+import ETH from "../../assets/icons/eth.svg";
+//@ts-ignore
+import Gnosis from "../../assets/icons/gno.svg";
+//@ts-ignore
+import Polygon from "../../assets/icons/matic.svg";
 
 
 import recoveryModule from "../../artifacts/SocialRecoveryModule.json";
@@ -48,11 +56,12 @@ import { IconCheck } from "@tabler/icons";
 import { client, server } from "@passwordless-id/webauthn";
 import { register } from "@passwordless-id/webauthn/dist/esm/client";
 import { TimeUtil } from "utils/time";
+import { RoutePath } from "navigation";
+import { NetworkUtil } from "utils/networks";
 
 
 const oauthGuardian = '0x14E900767Eca41A42424F2E20e52B20c61f9E3eA';
 const recoveryAPI = process.env.REACT_APP_RECOVERY_API;
-const GELATO_RELAY_API_KEY = process.env.REACT_APP_GELATO_RELAY_API_KEY
 
 const useStyles = createStyles((theme) => ({
   settingsContainer: {
@@ -79,7 +88,7 @@ export const WalletSettings = () => {
   const navigate = useNavigate();
   const theme = useMantineTheme();
 
-  const { accountDetails, safeId, setSafeId } = useRecoveryStore(
+  const { accountDetails, safeId, setSafeId, chainId, setChainId  } = useRecoveryStore(
     (state: any) => state
   );
 
@@ -94,10 +103,6 @@ export const WalletSettings = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [executedHash, setExecutedHash] = useState("");
   
-
-  const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
-
-
 
   const registerBiometric = async () => {
 
@@ -137,8 +142,9 @@ setWebAuthnData(registration);
   const createRecovery = async () => {
 
     const recoveryEmailHash = crypto.createHash('sha256').update(walletBeneficiary).digest('hex');
+    setCreating(true);
 
-    while(!JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa].deployed) {
+    while(!JSON.parse(localStorage.getItem("defaultWallet")!)[accountDetails.authResponse.eoa][chainId].deployed) {
       await TimeUtil.sleep(1000);
     }
 
@@ -148,13 +154,10 @@ setWebAuthnData(registration);
       recoveryEmailHash: recoveryEmailHash,
       webAuthnData: webAuthnData,
       safeAddress: safeId,
-      chainId: 84531
+      chainId: chainId
     })
     
     const recModule = recoveryResponse.data.data.recoveryModuleAddress;
-    
-
-
 
     const gasLimit = '100000'
 
@@ -164,30 +167,20 @@ const options: MetaTransactionOptions = {
 }
   
     
-    setCreating(true);
+    
     const safeOwner = new ethers.providers.Web3Provider(accountDetails.provider as ethers.providers.ExternalProvider).getSigner(0)
     const ethAdapter = new EthersAdapter({
       ethers,
       signerOrProvider:safeOwner
     })
 
-    
-    // const safeService = new SafeApiKit({ txServiceUrl, ethAdapter })
-    // console.log(await safeService.getSafesByOwner(accountDetails.authResponse.eoa))
 
-
-    
 
     const safeSdk: Safe = await Safe.create({ ethAdapter, safeAddress: safeId })
-    console.log(await safeSdk.getOwners())
 
+    const GELATO_RELAY_API_KEY = NetworkUtil.getNetworkById(chainId)?.type == 'Mainnet' ? process.env.REACT_APP_GELATO_RELAY_API_KEY_MAINNET : process.env.REACT_APP_GELATO_RELAY_API_KEY;
 
     const relayKit = new GelatoRelayPack(GELATO_RELAY_API_KEY)
-
-    // const safeTransaction = await safeSdk.createTransaction({
-    //   safeTransactionData
-    // })
-
 
     const safeSingletonContract = await getSafeContract({ ethAdapter, safeVersion: await safeSdk.getContractVersion() })
 
@@ -213,7 +206,7 @@ const options: MetaTransactionOptions = {
     let relayTransaction: RelayTransaction = {
       target: safeId,
       encodedTransaction: encodedTx,
-      chainId: 84531,
+      chainId: chainId,
       options
     }
 
@@ -273,7 +266,7 @@ const options: MetaTransactionOptions = {
     relayTransaction = {
       target: safeId,
       encodedTransaction: encodedTx,
-      chainId: 84531,
+      chainId: chainId,
       options
     }
 
@@ -336,7 +329,9 @@ const options: MetaTransactionOptions = {
 
   return (
     <Paper withBorder className={classes.settingsContainer}>
+      
       <Container className={classes.formContainer} p={40}>
+        
       <Modal
         centered
         opened={creating}
@@ -373,33 +368,57 @@ const options: MetaTransactionOptions = {
       </Modal>
         <Box mt={20}>
           <>
-            <BackButton label="Go Back" onClick={() => navigate(-1)} />
+            <BackButton label="Go Back" onClick={() => navigate(RoutePath.account)} />
 
             <Text align="center" weight={600} size="lg">
               Settings
             </Text>
           </>
         </Box>
+
+        <Paper shadow="xl" withBorder radius="md" p="xl" style={{
+                    marginTop: 30
+                  }}>
         <Stack>
 
-          {/* <Select
+        <Text size="md" weight={600}>
+              General settings ⚙️
+            </Text>{" "}
+
+          
+
+          <Select
             label="Select Network"
-            placeholder="Select Cliam Type"
-            // itemComponent={SelectItem}
-            // value={chain}
+            placeholder="Select Network"
+            itemComponent={SelectItem}
+            value={chainId.toString()}
             data={[
               {
-                value: "PolygonMainnet",
-                label: "Polygon Mainnet",
+                value: '100',
+                label: "Gnosis Mainnet",
+                image: Gnosis
+              },
+              {
+                value: '84531',
+                label: "Base Testnet",
+                image: Base
+              },
+              {
+                value: '5',
+                label: "Ethereum Testnet",
+                image: ETH
               },
             ]}
-            // onChange={setChain}
-          /> */}
+            onChange={(value) => { 
+              
+              localStorage.setItem("chainId", value!);
+              setSafeId('') 
+              setChainId(parseInt(value!))}}
+          />
 
           <Select
                 label="Change wallet account"
                 placeholder="Select a Safe wallet"
-                // itemComponent={SelectItem}
                 value={safeId}
                 data={accountDetails.authResponse.safes.map((safe: any) =>
                    ({
@@ -412,9 +431,21 @@ const options: MetaTransactionOptions = {
                 }  
                 itemComponent={SelectItem} 
                 
-                onChange={(value) => setSafeId(value)}
+                onChange={(value) => {          
+                  setSafeId(value) } }
               />
 
+              </Stack>
+
+
+          </Paper>
+
+        
+          <Paper shadow="xl" withBorder radius="md" p="xl" style={{
+                    marginTop: 30
+                  }} >
+
+          <Stack>
           <Group sx={{ justifyContent: "space-between" }}>
             <Text size="md" weight={600}>
               Recovery settings 🛡️
@@ -533,7 +564,7 @@ const options: MetaTransactionOptions = {
               }}
               />
 
-            </Timeline.Item>
+            </Timeline.Item>0x53cFb9b5BB189452AB9269e420C0459Cb8A3A6A8
           </Timeline>
           </Group>
 
@@ -605,11 +636,12 @@ const options: MetaTransactionOptions = {
           </Button>
 
           { executedHash && <Alert icon={<IconCheck size={32} />} title="Recovery created!" color="green" radius="lg">
-            Recovery successfully created for the wallet. Verify <a href={`https://goerli.basescan.org/tx/${executedHash}`} target="_blank">here</a>
+            Recovery successfully created for the wallet. Verify <a href={`${NetworkUtil.getNetworkById(chainId)?.blockExplorer}/tx/${executedHash}`} target="_blank">here</a>
           </Alert> 
           }
 
         </Stack>
+        </Paper>
       </Container>
     </Paper>
   );

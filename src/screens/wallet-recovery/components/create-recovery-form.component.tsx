@@ -41,6 +41,7 @@ import { Contract } from "ethers";
 import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
 import { RoutePath } from "navigation";
 import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
+import { NetworkUtil } from "utils/networks";
 
 
 
@@ -48,7 +49,6 @@ const progressMessage = [{text: "Setting up a new wallet. Powered by Safe â›“ðŸ”
 
 
 const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
 export const CreateRecoveryForm = () => {
   const { classes } = useStyles();
@@ -71,21 +71,17 @@ export const CreateRecoveryForm = () => {
   );
 
 
-  const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
-
-  
-
-
+  const chainId = 5
 
   useEffect(() => {
     ;(async () => {
       await setSafeAuth(
         await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
           
-          chainId: "0x14A33",
-          txServiceUrl: txServiceUrl, // Optional. Only if want to retrieve related safes
+          chainId: '0x' + NetworkUtil.getNetworkById(chainId)?.chainId.toString(16),
+          txServiceUrl: '0x' + NetworkUtil.getNetworkById(chainId)?.safeService, // Optional. Only if want to retrieve related safes
           authProviderConfig: {
-            rpcTarget: RPC_URL,
+            rpcTarget: NetworkUtil.getNetworkById(chainId)?.url!,
             clientId: 'BAcCop_qaWVfw15peOnVq8xd8KefD3UvZ-3bKip0RNy0w1J0Z8ZKNNzWiFW97a66S-UGr-oZpzdk1hE8SwWmy00',
             network: 'testnet',
             theme: 'dark'

@@ -7,63 +7,80 @@ const accountAddress = "";
 export enum Network {
   localhost = "localhost",
   mainnet = "mainnet",
-  kovan = "kovan",
-  rinkeby = "rinkeby",
-  ropsten = "ropsten",
   goerli = "goerli",
   polygontestnet = "polygontestnet",
+  base = "base",
   polygon = "polygon",
+  gnosis = "gnosis",
 }
 
 export const networks = {
   localhost: {
+    name: 'Local Chain',
     chainId: 31337,
+    type: 'Testnet',
     url: "http://localhost:8545",
+    safeService: "",
     blockExplorer: "",
     api: "",
   },
   mainnet: {
+    name: 'Ethereum',
+    type: 'Mainnet',
     chainId: 1,
     url: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
+    safeService: "https://safe-transaction-mainnet.safe.global",
     blockExplorer: "https://etherscan.io",
     api: `https://api.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
   },
-  kovan: {
-    chainId: 42,
-    url: `https://kovan.infura.io/v3/${INFURA_API_KEY}`,
-    blockExplorer: "https://kovan.etherscan.io",
-    api: `https://api-kovan.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
-  },
-  rinkeby: {
-    chainId: 4,
-    url: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
-    blockExplorer: "https://rinkeby.etherscan.io",
-    api: `https://api-rinkeby.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
-  },
-  ropsten: {
-    chainId: 3,
-    url: `https://ropsten.infura.io/v3/${INFURA_API_KEY}`,
-    blockExplorer: "https://ropsten.etherscan.io",
-    api: `https://api-ropsten.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
-  },
   goerli: {
+    name: 'Goerli',
+    type: 'Testnet',
     chainId: 5,
     url: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
+    safeService: "https://safe-transaction-goerli.safe.global",
     blockExplorer: "https://goerli.etherscan.io",
     api: `https://api-goerli.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
   },
+
+  base: {
+    name: 'Base',
+    type: 'Testnet',
+    chainId: 84531,
+    url: `https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0`,
+    blockExplorer: "https://goerli.basescan.org",
+    safeService: "https://safe-transaction-base-testnet.safe.global",
+    api: `https://api-goerli.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
+  },
+  gnosis: {
+    name: 'Gnosis',
+    type: 'Mainnet',
+    chainId: 100,
+    url: `https://rpc.gnosischain.com`,
+    safeService: "https://safe-transaction-gnosis-chain.safe.global",
+    blockExplorer: "https://gnosisscan.io",
+    api: `https://api-goerli.etherscan.io/api?apikey=${ETHERSCAN_API_KEY}`,
+  },
   polygontestnet: {
+    name: 'Polygon',
+    type: 'Testnet',
     chainId: 80001,
     url: "https://matic-mumbai.chainstacklabs.com",
+    safeService: "",
     blockExplorer: "https://mumbai.polygonscan.com",
     api: `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${accountAddress}&apikey=${POLYGONSCAN_API_KEY}`,
   },
   polygon: {
+    name: 'Polygon',
+    type: 'Mainnet',
     chainId: 137,
-    url: "https://matic-mumbai.chainstacklabs.com",
-    blockExplorer: "https://mumbai.polygonscan.com",
+    url: "https://matic-mainnet.chainstacklabs.com",
+    safeService: "https://safe-transaction-polygon.safe.global",
+    blockExplorer: "https://polygonscan.com",
     api: "",
   },
+
+
 };
 
 export class NetworkUtil {

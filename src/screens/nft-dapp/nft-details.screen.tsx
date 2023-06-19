@@ -36,13 +36,14 @@ import { GelatoRelayPack } from "@safe-global/relay-kit";
 
 
 const GELATO_RELAY_API_KEY = process.env.REACT_APP_GELATO_RELAY_API_KEY
-const nftContract = '0xe0c306959922f4094a2AA6f1D88Ff8640D9e3e5e';
+// const nftContract = '0xe0c306959922f4094a2AA6f1D88Ff8640D9e3e5e';
+const nftContract = '0x642F6eeAb36134BBe6fBAAB1EeB2a7EBC85739a8';
 
 export const NFTDetailsScreen = () => {
   const { classes } = useStyles();
 
   const navigate = useNavigate();
-  const { accountDetails, fetching, setFetching, safeId } = useRecoveryStore((state: any) => state);
+  const { accountDetails, fetching, setFetching, safeId, chainId } = useRecoveryStore((state: any) => state);
   const [ balance, setBalance ] = useState('0');
   const [ creating, setCreating ] = useState(false);
 
@@ -122,7 +123,7 @@ export const NFTDetailsScreen = () => {
     const relayTransaction = {
       target: safeId,
       encodedTransaction: encodedTx,
-      chainId: 84531,
+      chainId: chainId,
       options
     }
 

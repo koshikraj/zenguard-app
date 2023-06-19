@@ -1,0 +1,13 @@
+{
+    "defaultAddress": "0x3E5c63644E683549055b9Be8653de26E0B4CD36E",
+    "released": true,
+    "contractName": "SampleNFT",
+    "version": "1.0.0",
+    "networkAddresses": {
+      "5": "0x642F6eeAb36134BBe6fBAAB1EeB2a7EBC85739a8",
+      "84531": "0xe0c306959922f4094a2AA6f1D88Ff8640D9e3e5e",
+      "100": "0x642F6eeAb36134BBe6fBAAB1EeB2a7EBC85739a8"
+
+    }
+
+}

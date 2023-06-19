@@ -46,14 +46,12 @@ import { RoutePath } from "navigation";
 import { SafeAuthKit, SafeAuthProviderType } from "@safe-global/auth-kit";
 import axios from "axios";
 import { client } from "@passwordless-id/webauthn";
+import { NetworkUtil } from "utils/networks";
 
 
 
 const progressMessage = [{text: "Verifying the biometrics", image: Zenguard}, {text: "Authenticating a new user", image: Zenguard},  {text: "Recovering the wallet", image: Zenguard}]
 
-
-const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
 
 export const BiometricAuth = () => {
   const { classes } = useStyles();
@@ -79,7 +77,7 @@ export const BiometricAuth = () => {
   );
 
 
-  const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
+  const chainId = 5
   const recoveryAPI = process.env.REACT_APP_RECOVERY_API;
   
   
@@ -91,8 +89,8 @@ export const BiometricAuth = () => {
       web3AuthNetwork: 'testnet',
       chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
-        chainId: "0x14A33",
-        rpcTarget: RPC_URL,
+        chainId: '0x' + NetworkUtil.getNetworkById(chainId)?.chainId.toString(16),
+        rpcTarget: NetworkUtil.getNetworkById(chainId)?.url,
       },
       uiConfig: {
         theme: 'dark',

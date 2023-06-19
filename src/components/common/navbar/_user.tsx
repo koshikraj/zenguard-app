@@ -9,7 +9,7 @@ export function User() {
 
   let navigate = useNavigate();
   const theme = useMantineTheme();
-  const { authDetails, accountDetails, setAccountDetails, setAuthDetails } = useRecoveryStore(
+  const { authDetails, accountDetails, setAccountDetails, setAuthDetails, setSafeId } = useRecoveryStore(
     (state: any) => state
   );
   
@@ -39,7 +39,7 @@ export function User() {
             </Text>
           </Box>
           <UnstyledButton
-          onClick={async ()=> { await accountDetails.safeAuth.signOut(); setAuthDetails({}); setAccountDetails({});  navigate(RoutePath.login); }}
+          onClick={async ()=> { await accountDetails.safeAuth.signOut(); setSafeId(''); setAuthDetails({}); setAccountDetails({});  navigate(RoutePath.login); }}
           sx={{
             // display: 'block',
             // width: '100%',
@@ -54,7 +54,12 @@ export function User() {
           }}
         >
           {theme.dir === 'ltr' ? (
+             <Box sx={{ flex: 1 }}>
+               <Text size="xs" weight={500}>
+            Logout
+            </Text>
             <IconLogout  />
+            </Box>
           ) : (
             <IconLogout  />
           )}

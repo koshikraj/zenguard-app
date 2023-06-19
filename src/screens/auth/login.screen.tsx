@@ -34,11 +34,7 @@ import { StyledSpan } from "./auth.screen.styles";
 
 import Safe, { SafeAccountConfig, SafeFactory } from '@safe-global/safe-core-sdk'
 import useRecoveryStore from "store/recovery/recovery.store";
-
-const RPC_URL='https://restless-young-layer.base-goerli.discover.quiknode.pro/3860a9e7a99900628604b143682330d4cec99db0'
-
-
-const txServiceUrl = 'https://safe-transaction-base-testnet.safe.global/'
+import { NetworkUtil } from "utils/networks";
 
 export function LoginScreen(props: any) {
 
@@ -49,7 +45,7 @@ export function LoginScreen(props: any) {
   const [signingIn, setSigningIn] = useState(false);
   const [loginStatus, setLoginStatus] = useState(false);
 
-  const { setAccountDetails, safeId } = useRecoveryStore(
+  const { setAccountDetails, safeId, chainId } = useRecoveryStore(
     (state: any) => state
   );
 
@@ -63,42 +59,54 @@ export function LoginScreen(props: any) {
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null)
 
 
+  const authenticateUser = async (signin=false) => {
+
+    const safeAuth =  await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
+          
+      chainId: '0x' + NetworkUtil.getNetworkById(chainId)?.chainId.toString(16),
+      txServiceUrl:  NetworkUtil.getNetworkById(chainId)?.safeService, // Optional. Only if want to retrieve related safes
+      authProviderConfig: {
+        rpcTarget: NetworkUtil.getNetworkById(chainId)!.url,
+        clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
+        network: 'testnet',
+        theme: 'dark'
+      }
+    })
+
+    const response = signin ? await safeAuth?.signIn() : null;
+
+    return { response: response, auth: safeAuth}
+  }
+
+
   useEffect(() => {
     ;(async () => {
 
 
       var authStore = localStorage.getItem("openlogin_store");
       if(authStore && JSON.parse(authStore).idToken) {
-        setSigningIn(true);  
+        // setSigningIn(true);  
+        // const safeA =  await authenticateUser(true);
+      
+        // setSafeAuthSignInResponse(safeA.response!)
+        // setProvider(safeA.auth?.getProvider() as SafeEventEmitterProvider)
+  
+        // setAccountDetails({provider: safeA.auth?.getProvider() as SafeEventEmitterProvider, authResponse: safeA.response, safeAuth: safeA.auth })
+  
+         navigate(RoutePath.account)
       }
+      else {
       setLoginStatus(false);
-      const safeA =  await SafeAuthKit.init(SafeAuthProviderType.Web3Auth, {
-          
-        chainId: "0x14A33",
-        txServiceUrl: txServiceUrl, // Optional. Only if want to retrieve related safes
-        authProviderConfig: {
-          rpcTarget: RPC_URL,
-          clientId: process.env.REACT_APP_W3AUTH_CLIENTID!,
-          network: 'testnet',
-          theme: 'dark'
-        }
-      })
+      
+      const safeA =  await authenticateUser(false);
+
+
       setLoginStatus(true);
-      setSafeAuth(safeA);
+      setSafeAuth(safeA.auth);
+      }
     
 
-      if(authStore && JSON.parse(authStore).idToken) {
-      
-      
-      const response = await safeA?.signIn();
-      setSafeAuthSignInResponse(response!)
-      setProvider(safeA?.getProvider() as SafeEventEmitterProvider)
-
-    setAccountDetails({provider: safeA?.getProvider() as SafeEventEmitterProvider, authResponse: response, safeAuth: safeA })
-
-    navigate(safeId ? RoutePath.wallet : RoutePath.account)
-
-      }
+   
 
     })()
   }, [])
