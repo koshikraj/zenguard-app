@@ -564,7 +564,7 @@ const options: MetaTransactionOptions = {
               }}
               />
 
-            </Timeline.Item>0x53cFb9b5BB189452AB9269e420C0459Cb8A3A6A8
+            </Timeline.Item>
           </Timeline>
           </Group>
 
